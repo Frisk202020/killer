@@ -22,3 +22,7 @@ export type Faction = typeof FACTIONS[number];
 
 export type Race = (typeof RACES)[number]["name"];
 export const race_names = RACES.map((x) => x.name) as [Race, ...Race[]];
+
+export const validateNumber = (x: number | undefined) => x !== undefined && x >= 0;
+export const validateFaction = (x: Faction | undefined) => x !== undefined && FACTIONS.indexOf(x) !== -1;
+export const validateRace = (x: Race | undefined) => x !== undefined && race_names.indexOf(x) !== -1;

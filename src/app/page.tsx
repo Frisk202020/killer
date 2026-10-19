@@ -1,11 +1,11 @@
 "use client";
 
-import { type Body as PlayerBody } from "./api/players/route"
+import { type PutBody, type PostBody, buildGetBody } from "./api/players/model"
 
 export default function Home() {
     return <div>
         <button onClick={() => {
-            const data: PlayerBody = {
+            const data: PutBody = {
                 name: "frisk",
                 faction: "Sapiens",
                 race: "Assassin"
@@ -25,7 +25,7 @@ export default function Home() {
         }}>PUT</button>
 
         <button onClick={() => {
-            fetch("api/players").then((x) => {
+            fetch(`api/players?${buildGetBody(["Sapiens"])}`).then((x) => {
                 if (x.status !== 200 || !x.body) return;
                 x.json().then((x) => {
                     if (!x) return;
@@ -34,5 +34,21 @@ export default function Home() {
                 });
             });
         }}>GET</button>
+
+        <button onClick={() => {
+            const body: PostBody = { name: "frisk", data: { gold: 100, alive: false, faction: "Aazimaar", faction_score: 100, self_score: 100, race: "Bombardier" } };
+
+            fetch("api/players", {
+                body: JSON.stringify(body),
+                method: "POST"
+            }).then((x) => {
+                if (x.status !== 200 || !x.body) return;
+                x.json().then((x) => {
+                    if (!x) return;
+
+                    console.log(x);
+                });
+            });
+        }}>POST</button>
     </div>;
 }

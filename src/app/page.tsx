@@ -1,38 +1,37 @@
 "use client";
 
 import { type PutBody, type PostBody, buildGetBody, DeleteBody } from "./api/players/model"
+import { buildGetBody as getTargets, type PutBody as PutTarget, type DeleteBody as DeleteTarget } from "./api/targets/model"
+import { type PostBody as PostKill } from "./api/kill/model"
+
+const handle = (x: Response) => {
+    if (x.status !== 200 || !x.body) return;
+    x.json().then((x) => {
+        if (!x) return;
+
+        console.log(x);
+    });
+}
 
 export default function Home() {
     return <div>
+        <h3>Players</h3>
+
         <button onClick={() => {
             const data: PutBody = {
-                name: "frisk",
-                faction: "Sapiens",
+                name: "vera",
+                faction: "Tiefflins",
                 race: "Assassin"
             };
 
             fetch("api/players", {
                 method: "PUT",
                 body: JSON.stringify(data)
-            }).then((x) => {
-                if (!x.ok || !x.body) return;
-                x.json().then((x) => {
-                    if (!x) return;
-
-                    console.log(x);
-                })
-            });
+            }).then(handle);
         }}>PUT</button>
 
         <button onClick={() => {
-            fetch(`api/players?`).then((x) => {
-                if (x.status !== 200 || !x.body) return;
-                x.json().then((x) => {
-                    if (!x) return;
-
-                    console.log(x);
-                });
-            });
+            fetch(`api/players?`).then(handle);
         }}>GET</button>
 
         <button onClick={() => {
@@ -41,14 +40,7 @@ export default function Home() {
             fetch("api/players", {
                 body: JSON.stringify(body),
                 method: "POST"
-            }).then((x) => {
-                if (x.status !== 200 || !x.body) return;
-                x.json().then((x) => {
-                    if (!x) return;
-
-                    console.log(x);
-                });
-            });
+            }).then(handle);
         }}>POST</button>
 
         <button onClick={() => {
@@ -57,14 +49,42 @@ export default function Home() {
             fetch("api/players", {
                 body: JSON.stringify(body),
                 method: "DELETE"
-            }).then((x) => {
-                if (x.status !== 200 || !x.body) return;
-                x.json().then((x) => {
-                    if (!x) return;
-
-                    console.log(x);
-                });
-            });
+            }).then(handle);
         }}>DELETE</button>
+
+        <br></br>
+        <h3>Targets</h3>
+
+        <button onClick={() => {
+            fetch(`api/targets?${getTargets("Sapiens")}`).then(handle);
+        }}>GET</button>
+
+        <button onClick={() => {
+            const body: PutTarget = {faction: "Sapiens", target: "jenny"};
+            fetch("api/targets", {method: "PUT", body: JSON.stringify(body)}).then(handle);
+        }}>PUT</button>
+
+        <button onClick={() => {
+            const body: DeleteTarget = {faction: "Sapiens", target: "jenny"};
+            fetch("api/targets", {method: "DELETE", body: JSON.stringify(body)}).then(handle);
+        }}>DELETE</button>
+            
+        <br></br>
+        <h3>Reset targets</h3>
+
+        <button onClick={() => {
+            fetch("api/reset-targets", {method: "POST"}).then(handle);
+        }}>POST</button>
+
+        <br></br>
+        <h3>Kill</h3>
+
+        <button onClick={() => {
+            const body: PostKill = { query_faction: "Sapiens", killer: "frisk", killed: "jenny" };
+            fetch("api/kill", {
+                method: "POST",
+                body: JSON.stringify(body)
+            }).then(handle)
+        }}>POST</button>
     </div>;
 }

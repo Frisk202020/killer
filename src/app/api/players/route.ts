@@ -3,8 +3,8 @@ import { Faction, validateFaction, validateNumber, validateRace } from "@/db/dat
 import { players } from "@/db/schema";
 import { and, eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { ApiError } from "../util";
-import { PutBody } from "./model";
+import { DeleteBody, PutBody } from "./model";
+import { BuildError, GetError } from "../util";
 
 /**
  * Get player(s) data
@@ -51,7 +51,7 @@ export async function PUT(request: Request): Promise<NextResponse> {
             changes: x.changes
         });
     } catch(err) {
-        return ApiError(400, "Invalid JSON");
+        return GetError(err);
     }    
 }
 
@@ -63,10 +63,10 @@ export async function PUT(request: Request): Promise<NextResponse> {
 export async function POST(request: Request): Promise<NextResponse> {
     try {
         const body = await request.json();
-        if (body.name === undefined) return ApiError(400, "Name undefined");
+        if (body.name === undefined) return BuildError(400, "Name undefined");
         
         const data = (await db.select().from(players).where(eq(players.name, body.name)))[0];
-        if (data === undefined) return ApiError(400, "Player not found");
+        if (data === undefined) return BuildError(400, "Player not found");
 
         for (const field of (["gold", "self_score", "faction_score"] as const)) {
             if (validateNumber(body.data[field])) data[field] = body.data[field];
@@ -81,6 +81,25 @@ export async function POST(request: Request): Promise<NextResponse> {
             { changes: res.changes, input: body.data, data }
         );
     } catch (err) {
-        return ApiError(400, "Invalid JSON");
+        return GetError(err);
+    }
+}
+
+/**
+ * Delete by name
+ * 
+ * Admin-only
+ */
+export async function DELETE(request: Request): Promise<NextResponse> {
+    try {
+        const body: DeleteBody = await request.json();
+        if (body.name == "") return BuildError(400, "Name not provided");
+        
+        const res = await db.delete(players).where(eq(players.name, body.name));
+        return NextResponse.json({
+            changes: res.changes
+        });
+    } catch(err) {
+        return GetError(err);
     }
 }

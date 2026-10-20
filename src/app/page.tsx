@@ -1,6 +1,6 @@
 "use client";
 
-import { type PutBody, type PostBody, buildGetBody } from "./api/players/model"
+import { type PutBody, type PostBody, buildGetBody, DeleteBody } from "./api/players/model"
 
 export default function Home() {
     return <div>
@@ -25,7 +25,7 @@ export default function Home() {
         }}>PUT</button>
 
         <button onClick={() => {
-            fetch(`api/players?${buildGetBody(["Sapiens"])}`).then((x) => {
+            fetch(`api/players?`).then((x) => {
                 if (x.status !== 200 || !x.body) return;
                 x.json().then((x) => {
                     if (!x) return;
@@ -50,5 +50,21 @@ export default function Home() {
                 });
             });
         }}>POST</button>
+
+        <button onClick={() => {
+            const body: DeleteBody = { name: "frisk" };
+
+            fetch("api/players", {
+                body: JSON.stringify(body),
+                method: "DELETE"
+            }).then((x) => {
+                if (x.status !== 200 || !x.body) return;
+                x.json().then((x) => {
+                    if (!x) return;
+
+                    console.log(x);
+                });
+            });
+        }}>DELETE</button>
     </div>;
 }

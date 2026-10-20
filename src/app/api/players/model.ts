@@ -25,3 +25,7 @@ export interface PostBody {
         race?: Race
     }
 }
+
+export interface DeleteBody {
+    name: string
+}

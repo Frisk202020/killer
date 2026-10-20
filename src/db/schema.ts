@@ -3,7 +3,7 @@ import { FACTIONS, race_names } from "./data";
 
 export const players = sqliteTable("players", {
     id: integer().primaryKey({autoIncrement: true}),
-    name: text().notNull(),
+    name: text().notNull().unique(),
     gold: integer().notNull().default(0),
     self_score: integer().notNull().default(0),
     faction_score: integer().notNull().default(0),

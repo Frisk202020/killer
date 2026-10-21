@@ -24,3 +24,8 @@ export const external_faction_score = sqliteTable("external_faction_score", {
     faction: text({enum: FACTIONS}).notNull(),
     score: integer().notNull().default(0)
 });
+
+export const enigmas = sqliteTable("enigmas", {
+    id: integer().primaryKey(),
+    content: text()
+});

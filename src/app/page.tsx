@@ -3,6 +3,7 @@
 import { type PutBody, type PostBody, buildGetBody, DeleteBody } from "./api/players/model"
 import { buildGetBody as getTargets, type PutBody as PutTarget, type DeleteBody as DeleteTarget } from "./api/targets/model"
 import { type PostBody as PostKill } from "./api/kill/model"
+import { buildGetBody as getEnigmas, type PostBody as PostEnigmas, type DeleteBody as DeleteEnigmas } from "./api/enigmas/model"
 
 const handle = (x: Response) => {
     if (x.status !== 200 || !x.body) return;
@@ -86,5 +87,18 @@ export default function Home() {
                 body: JSON.stringify(body)
             }).then(handle)
         }}>POST</button>
+
+        <br></br>
+        <h3>Enigmas</h3>
+
+        <button onClick={() => fetch(`api/enigmas?${getEnigmas(1)}`).then(handle)}>GET</button>
+        <button onClick={() => {
+            const body: PostEnigmas = { id: 1, content: "Hello world" };
+            fetch("api/enigmas", { method: "POST", body: JSON.stringify(body) }).then(handle);
+        }}>POST</button>
+        <button onClick={() => {
+            const body: DeleteEnigmas = { id: 1 };
+            fetch("api/enigmas", { method: "DELETE", body: JSON.stringify(body) }).then(handle);
+        }}>DELETE</button>
     </div>;
 }

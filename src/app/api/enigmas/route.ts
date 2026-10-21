@@ -6,6 +6,9 @@ import { enigmas } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { DeleteBody, PostBody } from "./model";
 
+/**
+ * Everyone
+ */
 export async function GET(request: Request): Promise<NextResponse> {
     const url = new URL(request.url);
     const id = getDay(url.searchParams.get("id"));
@@ -17,6 +20,9 @@ export async function GET(request: Request): Promise<NextResponse> {
         : NextResponse.json({ data });
 }
 
+/**
+ * Admin
+ */
 export async function POST(request: Request): Promise<NextResponse> {
     try {    
         const body: PostBody = await request.json();
@@ -34,6 +40,9 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
 }
 
+/**
+ * Admin
+ */
 export async function DELETE(request: Request): Promise<NextResponse> {
     try {
         const body: DeleteBody = await request.json();

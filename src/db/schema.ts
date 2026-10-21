@@ -1,5 +1,5 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { FACTIONS, race_names } from "./data";
+import { ARENA_TOKENS, FACTIONS, race_names } from "./data";
 
 export const players = sqliteTable("players", {
     id: integer().primaryKey({autoIncrement: true}),
@@ -10,7 +10,9 @@ export const players = sqliteTable("players", {
     faction: text({enum: FACTIONS}).notNull(),
     alive: integer({mode: "boolean"}).notNull().default(true),
     race: text({enum: race_names}).notNull(),
-    target_weight: integer().notNull().default(50)
+    target_weight: integer().notNull().default(50),
+    arena_tokens: integer().notNull().default(ARENA_TOKENS),
+    arena_victories: integer().notNull().default(0)
 });
 
 export const faction_targets = sqliteTable("faction_targets", {

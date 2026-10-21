@@ -4,6 +4,7 @@ import { type PutBody, type PostBody, buildGetBody, DeleteBody } from "./api/pla
 import { buildGetBody as getTargets, type PutBody as PutTarget, type DeleteBody as DeleteTarget } from "./api/targets/model"
 import { type PostBody as PostKill } from "./api/kill/model"
 import { buildGetBody as getEnigmas, type PostBody as PostEnigmas, type DeleteBody as DeleteEnigmas } from "./api/enigmas/model"
+import { type PostBody as PostArena } from "./api/arena/model"
 
 const handle = (x: Response) => {
     if (x.status !== 200 || !x.body) return;
@@ -100,5 +101,18 @@ export default function Home() {
             const body: DeleteEnigmas = { id: 1 };
             fetch("api/enigmas", { method: "DELETE", body: JSON.stringify(body) }).then(handle);
         }}>DELETE</button>
+
+        <br></br>
+        <h3>Reset Players</h3>
+
+        <button onClick={() => fetch(`api/reset-players`, { method: "POST" }).then(handle)}>POST</button>
+
+        <br></br>
+        <h3>Arena</h3>
+
+        <button onClick={() => {
+            const body: PostArena = { winner: "frisk", looser: "loris" };
+            fetch("api/arena", { method: "POST", body: JSON.stringify(body) }).then(handle) 
+        }}>POST</button>
     </div>;
 }

@@ -25,6 +25,7 @@ export const race_names = RACES.map((x) => x.name) as [Race, ...Race[]];
 
 export const BASE_TARGETS_COUNT = 2;
 export const KILL_REWARD = 50;
+export const ARENA_TOKENS = 5;
 
 const DAYS_LOWER_BOUND = 1;
 const DAYS_HIGHER_BOUND = 7;

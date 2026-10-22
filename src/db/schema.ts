@@ -1,6 +1,33 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { ARENA_TOKENS, FACTIONS, race_names } from "./data";
 
+export const invitations = sqliteTable("invitations", {
+    id: integer().primaryKey().references(() => accounts.id),
+    token: text().notNull(),
+    expires: integer({mode: "timestamp"}).notNull()
+});
+
+export const accounts = sqliteTable("accounts", {
+    id: integer().primaryKey({autoIncrement: true}),
+    name: text().notNull(),
+    discord_id: text().notNull(),
+    pwd: text(),
+    player_id: integer().references(() => players.id),
+    admin_id: integer().references(() => admins.id)
+});
+
+export const admins = sqliteTable("admins", {
+    id: integer().primaryKey({autoIncrement: true}),
+    name: text().notNull()
+});
+
+export const sessions = sqliteTable("sessions", {
+    id: integer().primaryKey({autoIncrement: true}),
+    account: integer().references(() => accounts.id),
+    token: text().notNull(),
+    expires: integer({mode: "timestamp"}).notNull()
+})
+
 export const players = sqliteTable("players", {
     id: integer().primaryKey({autoIncrement: true}),
     name: text().notNull().unique(),

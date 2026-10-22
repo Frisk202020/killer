@@ -5,6 +5,8 @@ import { buildGetBody as getTargets, type PutBody as PutTarget, type DeleteBody 
 import { type PostBody as PostKill } from "./api/kill/model"
 import { buildGetBody as getEnigmas, type PostBody as PostEnigmas, type DeleteBody as DeleteEnigmas } from "./api/enigmas/model"
 import { type PostBody as PostArena } from "./api/arena/model"
+import { type PostBody as PostSetup } from "./api/setup-account/model"
+import { type PostBody as PostAuth } from "./api/authenticate/model"
 
 const handle = (x: Response) => {
     if (x.status !== 200 || !x.body) return;
@@ -20,10 +22,15 @@ export default function Home() {
         <h3>Players</h3>
 
         <button onClick={() => {
+            fetch(`api/players?`).then(handle);
+        }}>GET</button>
+
+        <button onClick={() => {
             const data: PutBody = {
-                name: "vera",
+                name: "frisk",
                 faction: "Tiefflins",
-                race: "Assassin"
+                race: "Assassin",
+                discord_id: "frisk2824"
             };
 
             fetch("api/players", {
@@ -31,10 +38,6 @@ export default function Home() {
                 body: JSON.stringify(data)
             }).then(handle);
         }}>PUT</button>
-
-        <button onClick={() => {
-            fetch(`api/players?`).then(handle);
-        }}>GET</button>
 
         <button onClick={() => {
             const body: PostBody = { name: "frisk", data: { gold: 100, alive: false, faction: "Aazimaar", faction_score: 100, self_score: 100, race: "Bombardier" } };
@@ -53,6 +56,22 @@ export default function Home() {
                 method: "DELETE"
             }).then(handle);
         }}>DELETE</button>
+
+        <br></br>
+        <h3>Setup Account</h3>
+
+        <button onClick={() => {
+            const body: PostSetup = { token: "56c82dd05254829366b3ac9a2f93f43deacc245244d5d16a671b5185a0937b40", pwd: "perdu" };
+            fetch("api/setup-account", { method: "POST", body: JSON.stringify(body) }).then(handle);
+        }}>POST</button>
+
+        <br></br>
+        <h3>Auth</h3>
+
+        <button onClick={() => {
+            const body: PostAuth = { name: "frisk", pwd: "perdu" };
+            fetch("api/authenticate", { method: "POST", body: JSON.stringify(body) }).then(handle);
+        }}>POST</button>
 
         <br></br>
         <h3>Targets</h3>

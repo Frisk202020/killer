@@ -10,6 +10,7 @@ export function buildGetBody(factions?: Faction[], names?: string[]) {
 
 export interface PutBody {
     name: string,
+    discord_id: string,
     faction: Faction,
     race: Race
 }

@@ -4,37 +4,41 @@ import { accounts, invitations, players } from "@/db/schema";
 import { and, eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { DeleteBody, PutBody } from "./model";
-import { BuildError, GetError } from "../util";
+import { BuildError, GetError } from "../error";
 import { randomBytes } from "crypto";
+import { authenticate } from "../authenticate";
 
-/**
- * Get player(s) data
- * 
- * Players can only access their faction
- * Admins can access everyone
- */
 export async function GET(request: Request): Promise<NextResponse> {
-    const filters = [];
-    try {
-        const url = new URL(request.url);
-        const factions = url.searchParams.get("factions")?.split(",");
-        const names = url.searchParams.get("names")?.split(",");
+    const user = await authenticate();
+    if (user === null) return BuildError(401, "");
 
+    const filters = [];
+    const url = new URL(request.url);
+
+    const names = url.searchParams.get("names")?.split(",");
+    if (names && names.length != 0) filters.push(inArray(players.name, names));
+
+    if (user.admin) {
+        const factions = url.searchParams.get("factions")?.split(",");
         if (factions && factions.length != 0) filters.push(inArray(players.faction, factions as Faction[]));
-        if (names && names.length != 0) filters.push(inArray(players.name, names));
-    } catch(err) {}
+    } else {
+        if (user.player_id === null) return BuildError(401, "");
+
+        const player = (await db.select().from(players).where(eq(players.id, user.player_id)))[0];
+        if (user.player_id === null) return BuildError(401, "");
+
+        filters.push(eq(players.faction, player.faction));
+    }
     
     return NextResponse.json(
         { data: await db.select().from(players).where(and(...filters)) }
     )
 }
 
-/**
- * Create a new player
- * 
- * Admin-only
- */
 export async function PUT(request: Request): Promise<NextResponse> {
+    const user = await authenticate();
+    if (user === null || !user.admin) return BuildError(401, "");
+
     try {
         const body: PutBody = await request.json();
         if (!validateFaction(body.faction) || !validateRace(body.race)) return NextResponse.json(
@@ -63,12 +67,10 @@ export async function PUT(request: Request): Promise<NextResponse> {
     }    
 }
 
-/**
- * Update an existing player by name by replacing the value of every specified field
- * 
- * Admin-only
- */
 export async function POST(request: Request): Promise<NextResponse> {
+    const user = await authenticate();
+    if (user === null || !user.admin) return BuildError(401, "");
+
     try {
         const body = await request.json();
         if (body.name === undefined) return BuildError(400, "Name undefined");
@@ -93,12 +95,10 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
 }
 
-/**
- * Delete by name
- * 
- * Admin-only
- */
 export async function DELETE(request: Request): Promise<NextResponse> {
+    const user = await authenticate();
+    if (user === null || !user.admin) return BuildError(401, "");
+
     try {
         const body: DeleteBody = await request.json();
         if (body.name == "") return BuildError(400, "Name not provided");

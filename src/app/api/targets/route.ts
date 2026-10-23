@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { BuildError, GetError } from "../util";
+import { BuildError, GetError } from "../error";
 import { faction_targets, players } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { Faction, validateFaction } from "@/db/data";

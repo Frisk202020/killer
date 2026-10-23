@@ -3,7 +3,7 @@ import { BASE_TARGETS_COUNT, FACTIONS } from "@/db/data";
 import { faction_targets } from "@/db/schema";
 import { new_target } from "@/db/targets";
 import { NextResponse } from "next/server";
-import { BuildError } from "../util";
+import { BuildError } from "../error";
 
 /**
  * Admin

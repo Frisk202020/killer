@@ -9,22 +9,17 @@ export const invitations = sqliteTable("invitations", {
 
 export const accounts = sqliteTable("accounts", {
     id: integer().primaryKey({autoIncrement: true}),
-    name: text().notNull(),
-    discord_id: text().notNull(),
+    name: text().notNull().unique(),
+    discord_id: text().notNull().unique(),
     pwd: text(),
-    player_id: integer().references(() => players.id),
-    admin_id: integer().references(() => admins.id)
-});
-
-export const admins = sqliteTable("admins", {
-    id: integer().primaryKey({autoIncrement: true}),
-    name: text().notNull()
+    player_id: integer().references(() => players.id).unique(),
+    admin: integer({mode: "boolean"}).default(false)
 });
 
 export const sessions = sqliteTable("sessions", {
     id: integer().primaryKey({autoIncrement: true}),
     account: integer().references(() => accounts.id),
-    token: text().notNull(),
+    token: text().notNull().unique(),
     expires: integer({mode: "timestamp"}).notNull()
 })
 

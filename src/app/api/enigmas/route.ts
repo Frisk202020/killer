@@ -1,6 +1,6 @@
 import { getDay } from "@/db/data";
 import { NextResponse } from "next/server";
-import { BuildError, GetError } from "../util";
+import { BuildError, GetError } from "../error";
 import { db } from "@/db";
 import { enigmas } from "@/db/schema";
 import { eq } from "drizzle-orm";

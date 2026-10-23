@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { BuildError, GetError } from "../util";
+import { BuildError, GetError } from "../error";
 import { PostBody } from "./model";
 import { faction_targets, players } from "@/db/schema";
 import { and, eq } from "drizzle-orm";

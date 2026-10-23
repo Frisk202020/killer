@@ -1,3 +1,5 @@
+import bcrypt from "bcryptjs";
+
 interface RaceDescription {
     name: string,
     base_gear: Gear[]
@@ -40,3 +42,5 @@ export function getDay(x: number|string|null|undefined): number|null {
 export const validateNumber = (x: number | undefined) => x !== undefined && x >= 0;
 export const validateFaction = (x: Faction | null | undefined) => x && FACTIONS.indexOf(x) !== -1;
 export const validateRace = (x: Race | undefined) => x !== undefined && race_names.indexOf(x) !== -1;
+
+export const hash = async (pwd: string) => await bcrypt.hash(pwd, 10);

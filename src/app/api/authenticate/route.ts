@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { BuildError, GetError } from "../util";
+import { BuildError, GetError } from "../error";
 import { PostBody } from "./model";
 import { db } from "@/db";
 import { accounts } from "@/db/schema";

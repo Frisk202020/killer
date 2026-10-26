@@ -7,6 +7,9 @@ export const GetError = (err: any = {}) => {
     }
 };
 
-export const BuildError = (status: number, reason: string) => NextResponse.json(
+export const BuildError = (status: number, reason: string="") => NextResponse.json(
     { reason }, { status }
 );
+
+export const PlayerNotFound = BuildError(404, "Player not found");
+export const PlayerUnauthorized = BuildError(401, "Player unauthorized");

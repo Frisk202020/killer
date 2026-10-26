@@ -1,12 +1,13 @@
 "use client";
 
-import { type PutBody, type PostBody, buildGetBody, DeleteBody } from "./api/players/model"
-import { buildGetBody as getTargets, type PutBody as PutTarget, type DeleteBody as DeleteTarget } from "./api/targets/model"
-import { type PostBody as PostKill } from "./api/kill/model"
-import { buildGetBody as getEnigmas, type PostBody as PostEnigmas, type DeleteBody as DeleteEnigmas } from "./api/enigmas/model"
-import { type PostBody as PostArena } from "./api/arena/model"
-import { type PostBody as PostSetup } from "./api/setup-account/model"
-import { type PostBody as PostAuth } from "./api/authenticate/model"
+import { type Put as PutPlayer, type Post as PostPlayer, type Get as GetPlayer, type Delete as DeletePlayer, GetSchema as GetPlayersSchema } from "./api/players/model"
+import { type Get as GetTarget, type Put as PutTarget, type Delete as DeleteTarget, GetSchema as GetTargetsSchema } from "./api/targets/model"
+import { type Get as GetEnigma, type Post as PostEnigma, type Delete as DeleteEnigma, GetSchema as GetEnigmasSchema } from "./api/enigmas/model"
+import type { Post as PostKill } from "./api/kill/model"
+import type { Post as PostArena } from "./api/arena/model"
+import type { Post as PostSetup } from "./api/setup-account/model"
+import type { Post as PostAuth } from "./api/authenticate/model"
+import { BuildGetParams } from "./api/model-helper";
 
 const handle = (x: Response) => {
     if (x.status !== 200 || !x.body) return;
@@ -22,15 +23,16 @@ export default function Home() {
         <h3>Players</h3>
 
         <button onClick={() => {
-            fetch(`api/players?`).then(handle);
+            const body: GetPlayer = { };
+            fetch(`api/players?${BuildGetParams(GetPlayersSchema, body)}`).then(handle);
         }}>GET</button>
 
         <button onClick={() => {
-            const data: PutBody = {
-                name: "frisk",
-                faction: "Tiefflins",
+            const data: PutPlayer = {
+                name: "hadrien",
+                faction: "Sapiens",
                 race: "Assassin",
-                discord_id: "frisk2824"
+                discord_id: "ha2824"
             };
 
             fetch("api/players", {
@@ -40,7 +42,10 @@ export default function Home() {
         }}>PUT</button>
 
         <button onClick={() => {
-            const body: PostBody = { name: "frisk", data: { gold: 100, alive: false, faction: "Aazimaar", faction_score: 100, self_score: 100, race: "Bombardier" } };
+            const body: PostPlayer = { 
+                name: "hugo", 
+                data: { gold: 100, alive: false, faction: "Aazimaar", faction_score: 100, self_score: 100, race: "Bombardier" } 
+            };
 
             fetch("api/players", {
                 body: JSON.stringify(body),
@@ -49,7 +54,7 @@ export default function Home() {
         }}>POST</button>
 
         <button onClick={() => {
-            const body: DeleteBody = { name: "frisk" };
+            const body: DeletePlayer = { name: "hadrien" };
 
             fetch("api/players", {
                 body: JSON.stringify(body),
@@ -69,7 +74,7 @@ export default function Home() {
         <h3>Auth</h3>
 
         <button onClick={() => {
-            const body: PostAuth = { name: "frisk", pwd: "perdu" };
+            const body: PostAuth = { name: "Frisk", pwd: "P&rdu:(0" };
             fetch("api/authenticate", { method: "POST", body: JSON.stringify(body) }).then(handle);
         }}>POST</button>
 
@@ -77,7 +82,8 @@ export default function Home() {
         <h3>Targets</h3>
 
         <button onClick={() => {
-            fetch(`api/targets?${getTargets("Sapiens")}`).then(handle);
+            const body: GetTarget = { faction: "Sapiens" };
+            fetch(`api/targets?${BuildGetParams(GetTargetsSchema, body)}`).then(handle);
         }}>GET</button>
 
         <button onClick={() => {
@@ -101,7 +107,7 @@ export default function Home() {
         <h3>Kill</h3>
 
         <button onClick={() => {
-            const body: PostKill = { query_faction: "Sapiens", killer: "frisk", killed: "jenny" };
+            const body: PostKill = { query_faction: "Sapiens", killer: "hugo", killed: "jenny" };
             fetch("api/kill", {
                 method: "POST",
                 body: JSON.stringify(body)
@@ -111,13 +117,16 @@ export default function Home() {
         <br></br>
         <h3>Enigmas</h3>
 
-        <button onClick={() => fetch(`api/enigmas?${getEnigmas(1)}`).then(handle)}>GET</button>
         <button onClick={() => {
-            const body: PostEnigmas = { id: 1, content: "Hello world" };
+            const body: GetEnigma = { id: 1 };
+            fetch(`api/enigmas?${BuildGetParams(GetEnigmasSchema, body)}`).then(handle)
+        }}>GET</button>
+        <button onClick={() => {
+            const body: PostEnigma = { id: 1, content: "Hello world" };
             fetch("api/enigmas", { method: "POST", body: JSON.stringify(body) }).then(handle);
         }}>POST</button>
         <button onClick={() => {
-            const body: DeleteEnigmas = { id: 1 };
+            const body: DeleteEnigma = { id: 1 };
             fetch("api/enigmas", { method: "DELETE", body: JSON.stringify(body) }).then(handle);
         }}>DELETE</button>
 
@@ -130,7 +139,7 @@ export default function Home() {
         <h3>Arena</h3>
 
         <button onClick={() => {
-            const body: PostArena = { winner: "frisk", looser: "loris" };
+            const body: PostArena = { winner: "hugo", looser: "loris" };
             fetch("api/arena", { method: "POST", body: JSON.stringify(body) }).then(handle) 
         }}>POST</button>
     </div>;

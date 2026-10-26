@@ -29,18 +29,7 @@ export const BASE_TARGETS_COUNT = 2;
 export const KILL_REWARD = 50;
 export const ARENA_TOKENS = 5;
 
-const DAYS_LOWER_BOUND = 1;
-const DAYS_HIGHER_BOUND = 7;
-export function getDay(x: number|string|null|undefined): number|null {
-    if (!x) return null;
-
-    const n = typeof x === "number" ? x :  Number.parseInt(x);
-    return Number.isNaN(n) || n < DAYS_LOWER_BOUND || n > DAYS_HIGHER_BOUND ? null : n;
-}
-
-
-export const validateNumber = (x: number | undefined) => x !== undefined && x >= 0;
-export const validateFaction = (x: Faction | null | undefined) => x && FACTIONS.indexOf(x) !== -1;
-export const validateRace = (x: Race | undefined) => x !== undefined && race_names.indexOf(x) !== -1;
+export const DAYS_LOWER_BOUND = 1;
+export const DAYS_HIGHER_BOUND = 7;
 
 export const hash = async (pwd: string) => await bcrypt.hash(pwd, 10);

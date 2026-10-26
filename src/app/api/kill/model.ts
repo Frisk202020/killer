@@ -1,7 +1,9 @@
-import { Faction } from "@/db/data";
+import { FACTIONS } from "@/db/data";
+import z from "zod";
 
-export interface PostBody {
-    query_faction: Faction,
-    killed: string,
-    killer: string
-}
+export const PostSchema = z.object({
+    query_faction: z.literal(FACTIONS),
+    killed: z.string(),
+    killer: z.string()
+});
+export type Post = z.infer<typeof PostSchema>;

@@ -2,7 +2,7 @@ import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { ARENA_TOKENS, FACTIONS, race_names } from "./data";
 
 export const invitations = sqliteTable("invitations", {
-    id: integer().primaryKey().references(() => accounts.id),
+    id: integer().primaryKey().references(() => accounts.id, { onDelete: "cascade" }),
     token: text().notNull(),
     expires: integer({mode: "timestamp"}).notNull()
 });
@@ -12,7 +12,7 @@ export const accounts = sqliteTable("accounts", {
     name: text().notNull().unique(),
     discord_id: text().notNull().unique(),
     pwd: text(),
-    player_id: integer().references(() => players.id).unique(),
+    player_id: integer().references(() => players.id, { onDelete: "cascade" }).unique(),
     admin: integer({mode: "boolean"}).default(false)
 });
 

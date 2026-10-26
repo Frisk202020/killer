@@ -1,32 +1,41 @@
-import { Faction, Race } from "@/db/data";
+import { FACTIONS, race_names } from "@/db/data";
+import z from "zod";
+import { PreprocessArrayString } from "../model-helper";
 
-export function buildGetBody(factions?: Faction[], names?: string[]) {
-    const query = [];
-    if (factions !== undefined && factions.length > 0) query.push(`factions=${factions.join()}`);
-    if (names !== undefined && names.length > 0) query.push(`names=${names.join()}`);
+export const GetSchema = z.object({
+    factions: z.preprocess(
+        PreprocessArrayString,
+        z.optional(z.array(z.literal(FACTIONS)))
+    ),
+    names: z.preprocess(
+        PreprocessArrayString,
+        z.optional(z.array(z.string()))
+    )
+});
+export type Get = z.infer<typeof GetSchema>;
 
-    return query.join("&");
-}
+export const PutSchema = z.object({
+    name: z.string(),
+    discord_id: z.string(),
+    faction: z.literal(FACTIONS),
+    race: z.literal(race_names)
+});
+export type Put = z.infer<typeof PutSchema>;
 
-export interface PutBody {
-    name: string,
-    discord_id: string,
-    faction: Faction,
-    race: Race
-}
+export const PostSchema = z.object({
+    name: z.string(),
+    data: z.object({
+        gold: z.optional(z.number().positive()),
+        self_score: z.optional(z.number().positive()),
+        faction_score: z.optional(z.number().positive()),
+        faction: z.optional(z.literal(FACTIONS)),
+        alive: z.optional(z.boolean()),
+        race: z.optional(z.literal(race_names))
+    })
+});
+export type Post = z.infer<typeof PostSchema>;
 
-export interface PostBody {
-    name: string,
-    data: {
-        gold?: number,
-        self_score?: number,
-        faction_score?: number,
-        faction?: Faction,
-        alive?: boolean,
-        race?: Race
-    }
-}
-
-export interface DeleteBody {
-    name: string
-}
+export const DeleteSchema = z.object({
+    name: z.string()
+});
+export type Delete = z.infer<typeof DeleteSchema>;

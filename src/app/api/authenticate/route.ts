@@ -1,38 +1,36 @@
 import { NextResponse } from "next/server";
-import { BuildError, GetError } from "../error";
-import { PostBody } from "./model";
+import { BuildError } from "../api-error";
+import { PostSchema } from "./model";
 import { db } from "@/db";
-import { accounts } from "@/db/schema";
+import { accounts, sessions } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { randomBytes } from "crypto";
 import { cookies } from "next/headers";
+import { JsonRoute } from "../route";
 
-export async function POST(request: Request): Promise<NextResponse> {
-    try {
-        const body: PostBody = await request.json();
-        if (!body.name || !body.pwd) return BuildError(401, "");
+export const POST = JsonRoute(PostSchema, async (body) => {
+    const account = (await db.select().from(accounts).where(eq(accounts.name, body.name)))[0];
+    if (account === undefined || account.pwd === null) return BuildError(401, "");
 
-        const account = (await db.select().from(accounts).where(eq(accounts.name, body.name)))[0];
-        if (account === undefined || account.pwd === null) return BuildError(401, "");
+    if (!(await bcrypt.compare(body.pwd, account.pwd))) return BuildError(401, "");
 
-        if (!(await bcrypt.compare(body.pwd, account.pwd))) return BuildError(401, "");
+    const token = randomBytes(32).toString("hex");
+    const store = await cookies();
+    const expires = new Date(Date.now());
+    expires.setHours(expires.getHours() + 12);
 
-        const token = randomBytes(32).toString("hex");
-        const store = await cookies();
-        const expires = new Date(Date.now());
-        expires.setHours(expires.getHours() + 12);
+    await db.insert(sessions).values({
+        token, expires, account: account.id
+    });
 
-        store.set("session", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            path: "/",
-            expires
-        });
+    store.set("session", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+        expires
+    });
 
-        return NextResponse.json({});
-    } catch(err) {
-        return GetError(err);
-    }
-}
+    return NextResponse.json({});
+});

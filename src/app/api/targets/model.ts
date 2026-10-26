@@ -1,15 +1,16 @@
-import { Faction } from "@/db/data";
+import { FACTIONS } from "@/db/data";
+import z from "zod";
 
-export function buildGetBody(faction: Faction) {
-    return `faction=${faction}`;
-}
+export const GetSchema = z.object({
+    faction: z.literal(FACTIONS)
+});
+export type Get = z.infer<typeof GetSchema>;
 
-export interface PutBody {
-    faction: Faction,
-    target: string
-}
+export const Schema = z.object({
+    faction: z.literal(FACTIONS),
+    target: z.string()
+});
+type Body = z.infer<typeof Schema>;
 
-export interface DeleteBody {
-    faction: Faction,
-    target: string
-}
+export type Put = Body;
+export type Delete = Body;

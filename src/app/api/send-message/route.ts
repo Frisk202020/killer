@@ -4,6 +4,6 @@ import { PostSchema } from "./model";
 import { NextResponse } from "next/server";
 
 export const POST = AuthenticatedJsonRoute(PostSchema, true, async (body) => {
-    bot_sends(body.message);
+    bot_sends(body.message, body.channel);
     return NextResponse.json({});
 });

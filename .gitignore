@@ -1,6 +1,6 @@
 *.db
 tmp.ts
-discord.json
+discord-*.json
 
 # dependencies
 node_modules/

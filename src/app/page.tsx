@@ -9,6 +9,7 @@ import type { Post as PostArena } from "./api/arena/model"
 import type { Post as PostSetup } from "./api/setup-account/model"
 import type { Post as PostAuth } from "./api/authenticate/model"
 import type { Post as PostBot } from "./api/send-message/model"
+import type { Post as PostDM } from "./api/send-dm/model"
 
 const handle = (x: Response) => {
     if (x.status !== 200 || !x.body) return;
@@ -145,11 +146,19 @@ export default function Home() {
         }}>POST</button>
 
         <br></br>
-        <h3>Bot</h3>
+        <h3>Bot channel</h3>
 
         <button onClick={() => {
-            const body: PostBot = { message: "hello world" };
+            const body: PostBot = { message: "hello world", channel: "debug" };
             fetch("api/send-message", { method: "POST", body: JSON.stringify(body) }).then(handle);
+        }}>POST</button>
+
+        <br></br>
+        <h3>Bot DM</h3>
+
+        <button onClick={() => {
+            const body: PostDM = { message: "hello world", user: "0000000000000000000" };
+            fetch("api/send-dm", { method: "POST", body: JSON.stringify(body) }).then(handle); 
         }}>POST</button>
     </div>;
 }

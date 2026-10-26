@@ -1,5 +1,6 @@
 "use client";
 
+import { BuildGetParams } from "./api/model-helper";
 import { type Put as PutPlayer, type Post as PostPlayer, type Get as GetPlayer, type Delete as DeletePlayer, GetSchema as GetPlayersSchema } from "./api/players/model"
 import { type Get as GetTarget, type Put as PutTarget, type Delete as DeleteTarget, GetSchema as GetTargetsSchema } from "./api/targets/model"
 import { type Get as GetEnigma, type Post as PostEnigma, type Delete as DeleteEnigma, GetSchema as GetEnigmasSchema } from "./api/enigmas/model"
@@ -7,7 +8,7 @@ import type { Post as PostKill } from "./api/kill/model"
 import type { Post as PostArena } from "./api/arena/model"
 import type { Post as PostSetup } from "./api/setup-account/model"
 import type { Post as PostAuth } from "./api/authenticate/model"
-import { BuildGetParams } from "./api/model-helper";
+import type { Post as PostBot } from "./api/send-message/model"
 
 const handle = (x: Response) => {
     if (x.status !== 200 || !x.body) return;
@@ -141,6 +142,14 @@ export default function Home() {
         <button onClick={() => {
             const body: PostArena = { winner: "hugo", looser: "loris" };
             fetch("api/arena", { method: "POST", body: JSON.stringify(body) }).then(handle) 
+        }}>POST</button>
+
+        <br></br>
+        <h3>Bot</h3>
+
+        <button onClick={() => {
+            const body: PostBot = { message: "hello world" };
+            fetch("api/send-message", { method: "POST", body: JSON.stringify(body) }).then(handle);
         }}>POST</button>
     </div>;
 }

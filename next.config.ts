@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   reactCompiler: true,
-  serverExternalPackages: ['better-sqlite3']
+  serverExternalPackages: ['better-sqlite3', "discord.js", "@discord/ws"]
 };
 
 export default nextConfig;

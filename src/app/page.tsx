@@ -157,7 +157,7 @@ export default function Home() {
         <h3>Bot DM</h3>
 
         <button onClick={() => {
-            const body: PostDM = { message: "hello world", user: "0000000000000000000" };
+            const body: PostDM = { message: "hello world", user: "000000000000000000" };
             fetch("api/send-dm", { method: "POST", body: JSON.stringify(body) }).then(handle); 
         }}>POST</button>
     </div>;

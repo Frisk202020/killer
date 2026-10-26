@@ -23,12 +23,38 @@ interface PendingToUser {
 
 class Bot {
     static #client: Client|null = null;
-    static #pendingChannel: PendingToChannel|null = null;
-    static #pendingUser: PendingToUser|null = null;
+    static #sending = false;
+
+    static #pendingChannel: PendingToChannel[] = [];
+    static #pendingUser: PendingToUser[] = [];
 
     static #tag = "[DISCORD]";
     static #log = (message: string) => console.log(`${this.#tag} ${message}`);
     static #error = (message: string) => console.error(`${this.#tag} ${message}`);
+    static #fail(cause: string) {
+        this.#error(cause);
+        this.Send(`<@&${publicConfig.adminRoleId}> ${cause}`, "fallback");
+    }
+
+    static async PopChannelQueue(wait=true) {
+        if (this.#pendingChannel.length === 0) return;
+        if (wait) await new Promise((r) => setTimeout(r, 1000));
+
+        const elm = this.#pendingChannel.pop();
+        if (elm === undefined) return;
+
+        this.Send(elm.message, elm.channel);
+    }
+
+    static async PopUserQueue(wait=true) {
+        if (this.#pendingUser.length === 0) return;
+        if (wait) await new Promise((r) => setTimeout(r, 1000));
+
+        const elm = this.#pendingUser.pop();
+        if (elm === undefined) return;
+
+        this.Dm(elm.message, elm.user);
+    }
 
     static Start() {
         const client = new Client({intents: [GatewayIntentBits.Guilds]});
@@ -37,17 +63,8 @@ class Bot {
             this.#log(`Ready! Logged in as ${ready.user.tag}`);
             this.#client = client;
 
-            if (this.#pendingChannel !== null) {
-                const args = this.#pendingChannel;
-                this.#pendingChannel = null;
-                this.Send(args.message, args.channel);
-            }
-
-            if (this.#pendingUser !== null) {
-                const args = this.#pendingUser;
-                this.#pendingUser = null;
-                this.Dm(args.message, args.user);
-            }
+            this.PopChannelQueue(false);
+            this.PopUserQueue(false);
         });
 
         client.once(Events.Error, (err) => {
@@ -59,41 +76,73 @@ class Bot {
 
     static async Send(message: string, channelName: ChannelName) {
         if (this.#client === null) {
-            this.#pendingChannel = { message, channel: channelName };
+            this.#pendingChannel.push({ message, channel: channelName });
             this.Start();
             return;
         }
 
+        if (this.#sending) {
+            this.#pendingChannel.push({ message, channel: channelName });
+            return;
+        }
+        this.#sending = true;
+
         let channel: Channel | null | undefined  = this.#client.channels.cache.get(publicConfig.channels[channelName]);
         if (channel === undefined) {
-            channel = await this.#client.channels.fetch(publicConfig.channels[channelName]);
+            try {
+                channel = await this.#client.channels.fetch(publicConfig.channels[channelName]);
+            } catch(_) {
+                this.#fail(`Failed to send message \`${message}\` in \`${channelName}\` : channel not found`);
+                return;
+            }
+
             if (channel === null) {
-                this.#error(`Channel not found : ${channelName} (${publicConfig.channels[channelName]})`);
+                this.#fail(`Failed to send message \`${message}\` in \`${channelName}\` : channel not found`);
                 return;
             }
         }
 
         if (!channel.isTextBased() || !channel.isSendable()) {
-            this.#error(`Can't send a message in the specified channel (${channel.name})`);
+            this.#fail(`Failed to send message '${message}' in ${channelName} : channel is not sendable or not text-based`);
             return;
         }
 
-        channel.send(message).then((x) => this.#log(`Sent ${x} in ${channelName}`)).catch((err) => this.#error(err));
+        channel.send(message).then((x) => {
+            this.#log(`Sent ${x} in ${channelName}`);
+            this.#sending = false;
+
+            this.PopChannelQueue();
+            this.PopUserQueue();
+        }).catch((err) => this.#error(err));
     }
 
     static async Dm(message: string, userId: string) {
         if (this.#client === null) {
-            this.#pendingUser = { message, user: userId };
+            this.#pendingUser.push({ message, user: userId });
             this.Start();
+            return;
+        }
+        if (this.#sending) {
+            this.#pendingUser.push({ message, user: userId });
             return;
         }
 
         let user = this.#client.users.cache.get(userId);
         if (user === undefined) {
-            user = await this.#client.users.fetch(userId);
+            try {
+                user = await this.#client.users.fetch(userId);
+            } catch(_) {
+                this.#fail(`Failed to send DM \`${message}\` to user \`${userId}\` : user not found`);
+                return;
+            }
         }
 
-        user.send(message);
-        this.#log(`Sent ${message} to ${userId}`);
+        user.send(message).then(() => {
+            this.#log(`Sent ${message} to ${userId}`);
+            this.#sending = false;
+
+            this.PopChannelQueue();
+            this.PopUserQueue();
+        });
     }
 }

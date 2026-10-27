@@ -18,7 +18,7 @@ export const accounts = sqliteTable("accounts", {
 
 export const sessions = sqliteTable("sessions", {
     id: integer().primaryKey({autoIncrement: true}),
-    account: integer().references(() => accounts.id),
+    account: integer().references(() => accounts.id, { onDelete: "cascade" }),
     token: text().notNull().unique(),
     expires: integer({mode: "timestamp"}).notNull()
 })
@@ -39,7 +39,7 @@ export const players = sqliteTable("players", {
 
 export const faction_targets = sqliteTable("faction_targets", {
     id: integer().primaryKey({autoIncrement: true}),
-    target: integer().notNull().references(() => players.id),
+    target: integer().notNull().references(() => players.id, { onDelete: "cascade" }),
     faction: text({enum: FACTIONS}).notNull(),
 });
 

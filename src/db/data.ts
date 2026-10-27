@@ -1,5 +1,8 @@
 import bcrypt from "bcryptjs";
 
+const HOST = "http://localhost:3000"
+export const route_from_host = (route: string) => HOST + "/" + route;
+
 interface RaceDescription {
     name: string,
     base_gear: Gear[]

@@ -31,10 +31,10 @@ export default function Home() {
 
         <button onClick={() => {
             const data: PutPlayer = {
-                name: "hadrien",
+                name: "clément",
                 faction: "Sapiens",
                 race: "Assassin",
-                discord_id: "ha2824"
+                discord_id: "526147484716761098"
             };
 
             fetch("api/players", {
@@ -56,7 +56,7 @@ export default function Home() {
         }}>POST</button>
 
         <button onClick={() => {
-            const body: DeletePlayer = { name: "hadrien" };
+            const body: DeletePlayer = { name: "clément" };
 
             fetch("api/players", {
                 body: JSON.stringify(body),

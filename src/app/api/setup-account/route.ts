@@ -14,6 +14,8 @@ export const POST = JsonRoute(PostSchema, async (body) => {
     const account = (await db.select().from(accounts).where(eq(accounts.id, invite.id)))[0];
     if (account === undefined) return BuildError(401, "");
 
+    await db.delete(invitations).where(eq(invitations.token, body.token))
+
     account.pwd = await hash(body.pwd);
     await db.update(accounts).set(account).where(eq(accounts.id, account.id));
 

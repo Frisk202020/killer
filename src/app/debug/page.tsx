@@ -31,10 +31,10 @@ export default function Home() {
 
         <button onClick={() => {
             const data: PutPlayer = {
-                name: "vera",
-                faction: "Tiefflins",
+                name: "clément",
+                faction: "Sapiens",
                 race: "Assassin",
-                discord_id: "6"
+                discord_id: "526147484716761098"
             };
 
             fetch("api/players", {

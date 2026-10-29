@@ -21,6 +21,16 @@ export default function Content({ player, targets } : {
     targets: { name: string, faction: string }[] 
 }) {
     const playerColors = faction_color(player.faction);
+    const targetsDisplay = targets.length === 0 
+        ? <p>Votre faction a abattu toutes les cibles du jour, félicitations !</p>
+        : targets.map((x, i) => <div key={`target.${i}`} style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center"
+    }}>
+        <p>{x.name} ({x.faction})</p>
+        <button onClick={() => setKilled(x)}>Revendiquer</button>
+    </div>)
 
     const [error, setError] = useState("");
     const [killed, setKilled] = useState<KilledData | null>(null);
@@ -102,15 +112,8 @@ export default function Content({ player, targets } : {
         </div>
 
         <div>
-            <p>Cibles de faction</p>
-            {targets.map((x, i) => <div key={`target.${i}`} style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center"
-            }}>
-                <p>{x.name} ({x.faction})</p>
-                <button onClick={() => setKilled(x)}>Revendiquer</button>
-            </div>)}
+            <p style={{textAlign: "center"}}>Cibles de faction</p>
+            {targetsDisplay}
         </div>
 
         <Nav></Nav>

@@ -1,7 +1,7 @@
 export const Nav = () => <div style={{
     display: "flex",
     position: "fixed",
-    bottom: ".5vw"
+    bottom: "0px"
 }}>
     {([
         "skills",

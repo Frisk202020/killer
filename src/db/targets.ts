@@ -4,12 +4,13 @@ import { Faction } from "./data";
 import { faction_targets, players } from "./schema";
 
 export async function new_target(query_faction: Faction): Promise<boolean> {
-    const exclude = (await db.select().from(faction_targets).where(and(
-        eq(faction_targets.faction, query_faction),
-    ))).map((x) => x.id);
+    const exclude = (await db.select({id: faction_targets.target})
+        .from(faction_targets).where(eq(faction_targets.faction, query_faction)))
+        .map((x) => x.id);
 
     const targets = await db.select().from(players).where(and(
         ne(players.faction, query_faction),
+        eq(players.alive, true),
         notInArray(players.id, exclude)
     ));
 

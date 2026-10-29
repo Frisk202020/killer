@@ -47,7 +47,9 @@ export const POST = AuthenticatedJsonRoute(PostSchema, false, async (body, user)
     killer.player.self_score += KILL_REWARD;
     await db.update(players).set(killer.player).where(eq(players.id, killer.player.id));
 
-    if (!new_target(body.query_faction)) return BuildError(500, "");
-    
+    killed.player.alive = false;
+    await db.update(players).set(killed.player).where(eq(players.id, killed.player.id));
+
+    await new_target(body.query_faction);
     return NextResponse.json({});
 }, true); 

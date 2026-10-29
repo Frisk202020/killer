@@ -1,8 +1,10 @@
 "use client"
 
 import "./style.css"
+import "../globals.css"
+
 import { useState } from "react";
-import { Post, PostSchema } from "../api/authenticate/model";
+import { PostSchema } from "../api/authenticate/model";
 import ErrorBox from "../../components/error/error";
 import Input from "@/components/input/input";
 
@@ -11,7 +13,7 @@ export default function Login() {
     const password = "password";
     const [error, setError] = useState("");
 
-    return <div id="main">
+    return <div className="main" id="main-login">
         <p style={{marginBottom: "10vh"}}>Connexion</p>
         <ErrorBox content={error}></ErrorBox>
 

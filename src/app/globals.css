@@ -47,3 +47,9 @@ a {
     color-scheme: dark;
   }
 }
+
+.main {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}

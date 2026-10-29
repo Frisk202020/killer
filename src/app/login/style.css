@@ -1,4 +1,4 @@
-#main {
+#main-login {
     border: 1vw solid;
     border-radius: 20px;
     width: 80vw;
@@ -7,7 +7,4 @@
     top: 9vh;
     left: 9vw;
     padding: 5vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }

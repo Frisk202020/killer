@@ -1,10 +1,10 @@
-import { Channel, Client, Events, GatewayIntentBits } from "discord.js";
+import { Channel, Client, Events, GatewayIntentBits, Message, MessagePayload } from "discord.js";
 import privateConfig from "../../discord-private.json"
 import publicConfig from "../../discord-public.json"
 
 export type ChannelName = keyof typeof publicConfig.channels;
-export function bot_sends(message: string, channel: ChannelName) {
-    Bot.Send(message, channel);
+export function bot_sends(message: string, channel: ChannelName, file?: File) {
+    Bot.Send(message, channel, file);
 }
 
 export function bot_dms(message: string, userId: string) {
@@ -13,7 +13,8 @@ export function bot_dms(message: string, userId: string) {
 
 interface PendingToChannel {
     message: string,
-    channel: keyof typeof publicConfig.channels
+    channel: keyof typeof publicConfig.channels,
+    file?: File
 }
 
 interface PendingToUser {
@@ -36,17 +37,25 @@ class Bot {
         this.Send(`<@&${publicConfig.adminRoleId}> ${cause}`, "fallback");
     }
 
-    static async PopChannelQueue(wait=true) {
+    static async #getPayloadWithAttach(content: string, file: File) {
+        const data = await file.arrayBuffer();
+        return {
+            content,
+            files: [Buffer.from(data)]
+        };
+    }
+
+    static async #popChannelQueue(wait=true) {
         if (this.#pendingChannel.length === 0) return;
         if (wait) await new Promise((r) => setTimeout(r, 1000));
 
         const elm = this.#pendingChannel.pop();
         if (elm === undefined) return;
 
-        this.Send(elm.message, elm.channel);
+        this.Send(elm.message, elm.channel, elm.file);
     }
 
-    static async PopUserQueue(wait=true) {
+    static async #popUserQueue(wait=true) {
         if (this.#pendingUser.length === 0) return;
         if (wait) await new Promise((r) => setTimeout(r, 1000));
 
@@ -63,8 +72,8 @@ class Bot {
             this.#log(`Ready! Logged in as ${ready.user.tag}`);
             this.#client = client;
 
-            this.PopChannelQueue(false);
-            this.PopUserQueue(false);
+            this.#popChannelQueue(false);
+            this.#popUserQueue(false);
         });
 
         client.once(Events.Error, (err) => {
@@ -74,15 +83,15 @@ class Bot {
         client.login(privateConfig.token);
     }
 
-    static async Send(message: string, channelName: ChannelName) {
+    static async Send(message: string, channelName: ChannelName, file?: File) {
         if (this.#client === null) {
-            this.#pendingChannel.push({ message, channel: channelName });
+            this.#pendingChannel.push({ message, channel: channelName, file });
             this.Start();
             return;
         }
 
         if (this.#sending) {
-            this.#pendingChannel.push({ message, channel: channelName });
+            this.#pendingChannel.push({ message, channel: channelName, file });
             return;
         }
         this.#sending = true;
@@ -107,12 +116,16 @@ class Bot {
             return;
         }
 
-        channel.send(message).then((x) => {
+        const payload = file === undefined 
+            ? message 
+            : new MessagePayload(channel, await this.#getPayloadWithAttach(message, file));
+
+        channel.send(payload).then((x) => {
             this.#log(`Sent ${x} in ${channelName}`);
             this.#sending = false;
 
-            this.PopChannelQueue();
-            this.PopUserQueue();
+            this.#popChannelQueue();
+            this.#popUserQueue();
         }).catch((err) => this.#error(err));
     }
 
@@ -141,8 +154,8 @@ class Bot {
             this.#log(`Sent ${message} to ${userId}`);
             this.#sending = false;
 
-            this.PopChannelQueue();
-            this.PopUserQueue();
+            this.#popChannelQueue();
+            this.#popUserQueue();
         });
     }
 }

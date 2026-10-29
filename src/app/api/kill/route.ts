@@ -1,40 +1,53 @@
 import { db } from "@/db";
 import { BuildError, PlayerUnauthorized } from "../api-error";
 import { PostSchema } from "./model";
-import { faction_targets, players } from "@/db/schema";
+import { accounts, faction_targets, players } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { new_target } from "@/db/targets";
 import { NextResponse } from "next/server";
 import { KILL_REWARD } from "@/db/data";
 import { AuthenticatedJsonRoute } from "../route";
 import { assertAuthorized } from "../authenticate";
+import { bot_sends } from "@/app/discord";
 
-export const POST = AuthenticatedJsonRoute(PostSchema, true, async (body, user) => {
-    const killer = (await db.select().from(players).where(eq(players.name, body.killer)))[0];
-    if (!killer) return BuildError(404, "Killer not found");
-    if (!killer.alive) return BuildError(409, "Player is dead");
+export const POST = AuthenticatedJsonRoute(PostSchema, false, async (body, user) => {
+    const [killerP, killedP] = ([
+        body.killer,
+        body.killed
+    ] as const).map(async (x) => (await db.select({
+        player: {
+            id: players.id,
+            name: players.name,
+            alive: players.alive,
+            faction: players.faction,
+            self_score: players.self_score
+        }, account: {
+            discord: accounts.discord_id
+        }
+    }).from(players).where(eq(players.name, x)).innerJoin(accounts, eq(accounts.player_id, players.id)))[0])
 
-    const killed = (await db.select().from(players).where(eq(players.name, body.killed)))[0];
-    if (!killed) return BuildError(404, "Killed not found");
-    if (!killed.alive) return BuildError(409, "Killed is dead");
-
-    if (!assertAuthorized(user, killer.id, killed.id)) return PlayerUnauthorized;
+    const [killer, killed] = [await killerP, await killedP];
+    if (killer === undefined) return BuildError(404, "Killer not found");
+    if (killed === undefined) return BuildError(404, "Killed not found");
+    if (!assertAuthorized(user, killer.player.id, killed.player.id)) return PlayerUnauthorized;
 
     const target = (await db.select().from(faction_targets).where(and(
         eq(faction_targets.faction, body.query_faction), 
-        eq(faction_targets.target, killed.id)
+        eq(faction_targets.target, killed.player.id)
     )))[0];
-    if (!target) return BuildError(400, `${killed.name} is not a target of this faction`);
+    if (!target) return BuildError(400, `${killed.player.name} is not a target of this faction`);
 
     await db.delete(faction_targets).where(and(
-        eq(faction_targets.faction, killer.faction),
+        eq(faction_targets.faction, killer.player.faction),
         eq(faction_targets.target, target.target)
     ));
 
-    killer.self_score += KILL_REWARD;
-    await db.update(players).set(killer).where(eq(players.id, killer.id));
+    bot_sends(`<@${killer.account.discord}> a assassiné <@${killed.account.discord}> !`, "debug", body.proof);
+
+    killer.player.self_score += KILL_REWARD;
+    await db.update(players).set(killer.player).where(eq(players.id, killer.player.id));
 
     if (!new_target(body.query_faction)) return BuildError(500, "");
     
     return NextResponse.json({});
-}); 
+}, true); 

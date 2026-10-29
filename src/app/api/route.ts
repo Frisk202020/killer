@@ -37,16 +37,26 @@ export const JsonRoute = <T extends ZodObject>(schema: T, f: Body<z.infer<T>>): 
     }
 }
 
+async function get_body(request: Request, asFormData: boolean) {
+    if (asFormData) {
+        const data = await request.formData();
+        return Object.fromEntries(data);
+    }
+
+    return await request.json();
+}
+
 export const AuthenticatedJsonRoute = <T extends ZodObject>(
     schema: T, 
     adminOnly: boolean, 
-    f: AuthenticatedBody<z.infer<T>>
+    f: AuthenticatedBody<z.infer<T>>,
+    asFormData: boolean = false
 ): Route => async (request) => {
     const user = await authenticate();
     if (user === null || adminOnly && !user.admin) return BuildError(401);
 
     try {
-        const body = await request.json();
+        const body = await get_body(request, asFormData);
         const parsed = schema.safeParse(body);
         if (!parsed.success) return BuildError(400, parsed.error.message);
 

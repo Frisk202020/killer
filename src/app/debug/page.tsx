@@ -31,10 +31,10 @@ export default function Home() {
 
         <button onClick={() => {
             const data: PutPlayer = {
-                name: "clément",
-                faction: "Sapiens",
+                name: "vera",
+                faction: "Tiefflins",
                 race: "Assassin",
-                discord_id: "526147484716761098"
+                discord_id: "6"
             };
 
             fetch("api/players", {
@@ -109,7 +109,7 @@ export default function Home() {
         <h3>Kill</h3>
 
         <button onClick={() => {
-            const body: PostKill = { query_faction: "Sapiens", killer: "hugo", killed: "jenny" };
+            const body: PostKill = { query_faction: "Sapiens", killer: "hugo", killed: "jenny", proof: new File([], "dummy") };
             fetch("api/kill", {
                 method: "POST",
                 body: JSON.stringify(body)

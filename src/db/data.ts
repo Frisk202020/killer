@@ -25,6 +25,25 @@ const RACES = [
 export const FACTIONS = ["Aazimaar", "Sapiens", "Tiefflins"] as const;
 export type Faction = typeof FACTIONS[number];
 
+export function faction_color(faction: Faction) {
+    switch(faction) {
+        case "Aazimaar": return {
+            primary: "#8eeafd",
+            secondary: "#00aacc"
+        };
+
+        case "Sapiens": return {
+            primary: "#73fc93",
+            secondary: "#00a025"
+        };
+
+        case "Tiefflins": return {
+            primary: "#ff6e6e",
+            secondary: "#bd2727"
+        }
+    }
+}
+
 export type Race = (typeof RACES)[number]["name"];
 export const race_names = RACES.map((x) => x.name) as [Race, ...Race[]];
 

@@ -1,6 +1,8 @@
 "use client"
 
+import "../../globals.css"
 import "./style.css"
+
 import { Post } from "@/app/api/authenticate/model";
 import { PostSchema } from "@/app/api/setup-account/model";
 import ErrorBox from "@/components/error/error";
@@ -17,9 +19,9 @@ export default function Content({ name, token } : { name: string, token: string 
     if (failed) new Promise(r => setTimeout(r, 3000)).then(() => window.location.href = "/login");
     
 
-    return failed ? <div className="main">
+    return failed ? <div className="main" id="main-welcome">
         <p>Nous n'avons pas réussi à vous authentifier. Vous allez être redirigé vers la page de connexion...</p>
-    </div> : <div className="main">
+    </div> : <div className="main" id="main-welcome">
         <p>Bienvenue, {name} !</p>
         <p>Pour finaliser votre inscription, veuillez renseigner votre mot de passe.</p>
         <ErrorBox content={error}></ErrorBox>

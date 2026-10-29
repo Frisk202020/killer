@@ -1,0 +1,15 @@
+#main-home {
+    margin: 2vh;
+}
+
+#main-form {
+    margin: 5vh;
+    border: solid 2vw;
+    border-radius: 20px;
+    padding: 2vw;
+    text-align: center;
+}
+
+#main-form * {
+    margin: 2vh
+}

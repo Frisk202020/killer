@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 import { ARENA_TOKENS, FACTIONS, race_names } from "./data";
 
 export const invitations = sqliteTable("invitations", {
@@ -43,13 +43,25 @@ export const faction_targets = sqliteTable("faction_targets", {
     faction: text({enum: FACTIONS}).notNull(),
 });
 
-export const external_faction_score = sqliteTable("external_faction_score", {
+export const faction_vault = sqliteTable("faction_vault", {
     id: integer().primaryKey({autoIncrement: true}),
-    faction: text({enum: FACTIONS}).notNull(),
-    score: integer().notNull().default(0)
+    faction: text({enum: FACTIONS}).notNull().unique(),
+    score: integer().notNull().default(0),
+    gold: integer().notNull().default(0)
 });
 
 export const enigmas = sqliteTable("enigmas", {
     id: integer().primaryKey(),
-    content: text()
+    content: text().notNull(),
+    solution: text().notNull(),
+    gold_reward: integer().default(0).notNull(),
+    score_reward: integer().default(0).notNull()
 });
+
+export const solved_enigmas = sqliteTable("solved_enigmas", {
+    id: integer().primaryKey({autoIncrement: true}),
+    enigma: integer().notNull().references(() => enigmas.id, { onDelete: "cascade" }),
+    faction: text({enum: FACTIONS}).notNull()
+}, (t) => [
+    unique().on(t.enigma, t.faction)
+]);

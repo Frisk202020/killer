@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import z from "zod";
 
 const HOST = "http://localhost:3000"
 export const route_from_host = (route: string) => HOST + "/" + route;
@@ -51,7 +52,19 @@ export const BASE_TARGETS_COUNT = 2;
 export const KILL_REWARD = 50;
 export const ARENA_TOKENS = 5;
 
-export const DAYS_LOWER_BOUND = 1;
-export const DAYS_HIGHER_BOUND = 7;
+const DAYS_LOWER_BOUND = 1;
+const DAYS_HIGHER_BOUND = 7;
+
+export const Day = z.number().min(DAYS_LOWER_BOUND).max(DAYS_HIGHER_BOUND);
+export function EnigmaReward(rank: number) {
+    switch(rank) {
+        case 1: return 1;
+        case 2: return .7;
+        case 3: return .5;
+        default: return 0;
+    }
+}
+
+export const CURRENT_DAY = 1;
 
 export const hash = async (pwd: string) => await bcrypt.hash(pwd, 10);

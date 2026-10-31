@@ -15,7 +15,7 @@ export const GET = GetRoute(GetSchema, false, async (body) => {
 
 export const POST = AuthenticatedJsonRoute(PostSchema, true, async (body) => {
     await db.insert(enigmas)
-        .values({id: body.id, content: body.content})
+        .values({id: body.id, content: body.content, solution: body.solution, gold_reward: body.gold_reward, score_reward: body.score_reward})
         .onConflictDoUpdate({target: enigmas.id, set: {content: body.content}});
 
     return NextResponse.json({})

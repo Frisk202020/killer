@@ -124,7 +124,7 @@ export default function Home() {
             fetch(`api/enigmas?${BuildGetParams(GetEnigmasSchema, body)}`).then(handle)
         }}>GET</button>
         <button onClick={() => {
-            const body: PostEnigma = { id: 1, content: "Hello world" };
+            const body: PostEnigma = { id: 1, content: "Hello world", solution: "feur" };
             fetch("api/enigmas", { method: "POST", body: JSON.stringify(body) }).then(handle);
         }}>POST</button>
         <button onClick={() => {
@@ -149,7 +149,7 @@ export default function Home() {
         <h3>Bot channel</h3>
 
         <button onClick={() => {
-            const body: PostBot = { message: "hello world", channel: "debug" };
+            const body: PostBot = { message_components: [{type: "message", content: "hello world"}], channel: "debug" };
             fetch("api/send-message", { method: "POST", body: JSON.stringify(body) }).then(handle);
         }}>POST</button>
 

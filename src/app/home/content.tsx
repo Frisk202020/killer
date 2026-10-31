@@ -9,7 +9,7 @@ import { Nav } from "./nav";
 import { useState } from "react";
 import { Faction, faction_color } from "@/db/data";
 import { Post, PostSchema } from "../api/kill/model";
-import ErrorBox from "@/components/error/error";
+import TextBox from "@/components/text-box/text-box";
 
 interface KilledData {
     name: string,
@@ -51,7 +51,7 @@ export default function Content({ player, targets } : {
             backgroundColor: playerColors.primary,
             color: playerColors.secondary
         }}>
-            <ErrorBox content={error}></ErrorBox>
+            <TextBox content={error} setter={setError}></TextBox>
 
             <p>Vous allez réclamer l'assassinat de {killed.name} ({killed.faction})</p>
             <p>Ajoutez maintenant une preuve à l'image de votre exploit !</p>

@@ -5,7 +5,7 @@ import "./style.css"
 
 import { Post } from "@/app/api/authenticate/model";
 import { PostSchema } from "@/app/api/setup-account/model";
-import ErrorBox from "@/components/error/error";
+import TextBox from "@/components/text-box/text-box";
 import Input from "@/components/input/input";
 import { useState } from "react";
 
@@ -24,7 +24,7 @@ export default function Content({ name, token } : { name: string, token: string 
     </div> : <div className="main" id="main-welcome">
         <p>Bienvenue, {name} !</p>
         <p>Pour finaliser votre inscription, veuillez renseigner votre mot de passe.</p>
-        <ErrorBox content={error}></ErrorBox>
+        <TextBox content={error} setter={setError}></TextBox>
 
         <form style={{
             display: "flex",

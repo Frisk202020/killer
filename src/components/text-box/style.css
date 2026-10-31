@@ -1,16 +1,15 @@
-.error-container {
+.box-container {
     width: 100vw;
     position: fixed;
     left: 0px;
     top: 5vh;
     display: flex;
     justify-content: center;
-    float: left
+    float: left;
+    pointer-events: none;
 }
 
-.error-box {
-    background-color: #e9a9a9e1;
-    border: .5vw solid #fc6c6c;
+.box {
     border-radius: 5px;
     padding: 2vw;
     text-align: center;

@@ -1,15 +1,8 @@
-import { Channel, Client, Events, GatewayIntentBits, Message, MessagePayload } from "discord.js";
+import { Channel, Client, Events, GatewayIntentBits, MessagePayload } from "discord.js";
 import privateConfig from "../../discord-private.json"
 import publicConfig from "../../discord-public.json"
 
-export type ChannelName = keyof typeof publicConfig.channels;
-export function bot_sends(message: string, channel: ChannelName, file?: File) {
-    Bot.Send(message, channel, file);
-}
-
-export function bot_dms(message: string, userId: string) {
-    Bot.Dm(message, userId);
-}
+type ChannelName = keyof typeof publicConfig.channels;
 
 interface PendingToChannel {
     message: string,
@@ -22,7 +15,7 @@ interface PendingToUser {
     user: string
 }
 
-class Bot {
+export default class Bot {
     static #client: Client|null = null;
     static #sending = false;
 
@@ -34,7 +27,7 @@ class Bot {
     static #error = (message: string) => console.error(`${this.#tag} ${message}`);
     static #fail(cause: string) {
         this.#error(cause);
-        this.Send(`<@&${publicConfig.adminRoleId}> ${cause}`, "fallback");
+        this.Send(`${this.PingRole("admin")} ${cause}`, "fallback");
     }
 
     static async #getPayloadWithAttach(content: string, file: File) {
@@ -65,7 +58,7 @@ class Bot {
         this.Dm(elm.message, elm.user);
     }
 
-    static Start() {
+    static #start() {
         const client = new Client({intents: [GatewayIntentBits.Guilds]});
 
         client.once(Events.ClientReady, (ready) => {
@@ -83,10 +76,13 @@ class Bot {
         client.login(privateConfig.token);
     }
 
+    static PingUser = (userId: string) => `<@${userId}>`;
+    static PingRole = (role: keyof typeof publicConfig.roles) => `<@&${publicConfig.roles[role]}>`
+
     static async Send(message: string, channelName: ChannelName, file?: File) {
         if (this.#client === null) {
             this.#pendingChannel.push({ message, channel: channelName, file });
-            this.Start();
+            this.#start();
             return;
         }
 
@@ -132,7 +128,7 @@ class Bot {
     static async Dm(message: string, userId: string) {
         if (this.#client === null) {
             this.#pendingUser.push({ message, user: userId });
-            this.Start();
+            this.#start();
             return;
         }
         if (this.#sending) {

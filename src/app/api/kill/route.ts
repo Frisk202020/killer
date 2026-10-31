@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 import { KILL_REWARD } from "@/db/data";
 import { AuthenticatedJsonRoute } from "../route";
 import { assertAuthorized } from "../authenticate";
-import { bot_sends } from "@/app/discord";
+import Bot from "@/app/discord";
 
 export const POST = AuthenticatedJsonRoute(PostSchema, false, async (body, user) => {
     const [killerP, killedP] = ([
@@ -42,7 +42,7 @@ export const POST = AuthenticatedJsonRoute(PostSchema, false, async (body, user)
         eq(faction_targets.target, target.target)
     ));
 
-    bot_sends(`<@${killer.account.discord}> a assassiné <@${killed.account.discord}> !`, "debug", body.proof);
+    Bot.Send(`${Bot.PingUser(killer.account.discord)} a assassiné ${Bot.PingUser(killed.account.discord)} !`, "debug", body.proof);
 
     killer.player.self_score += KILL_REWARD;
     await db.update(players).set(killer.player).where(eq(players.id, killer.player.id));

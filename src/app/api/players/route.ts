@@ -6,7 +6,7 @@ import { DeleteSchema, GetSchema, PostSchema, PutSchema } from "./model";
 import { BuildError, PlayerNotFound } from "../api-error";
 import { randomBytes } from "crypto";
 import { GetRoute, AuthenticatedJsonRoute } from "../route";
-import { bot_dms } from "@/app/discord";
+import Bot from "@/app/discord";
 import { route_from_host } from "@/db/data";
 
 export const GET = GetRoute(GetSchema, false, async (body, user) => {
@@ -48,7 +48,7 @@ export const PUT = AuthenticatedJsonRoute(PutSchema, true, async (body) => {
     
     await db.insert(invitations).values({ id: account.lastInsertRowid as number, token, expires });
 
-    bot_dms(
+    Bot.Dm(
         `Vous avez été invité en tant que joueur pour le Killer !\n\nVeuillez finaliser la création de votre compte joueur en cliquant sur ce [lien](${route_from_host(`/welcome/${token}`)}).\n\n**Attention, ce lien est à usage unique !**`,
         body.discord_id
     );

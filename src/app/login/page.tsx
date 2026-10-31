@@ -5,7 +5,7 @@ import "../globals.css"
 
 import { useState } from "react";
 import { PostSchema } from "../api/authenticate/model";
-import ErrorBox from "../../components/error/error";
+import TextBox from "../../components/text-box/text-box";
 import Input from "@/components/input/input";
 
 export default function Login() {
@@ -15,7 +15,7 @@ export default function Login() {
 
     return <div className="main" id="main-login">
         <p style={{marginBottom: "10vh"}}>Connexion</p>
-        <ErrorBox content={error}></ErrorBox>
+        <TextBox content={error} setter={setError}></TextBox>
 
         <form onSubmit={(event) => {
             event.preventDefault();

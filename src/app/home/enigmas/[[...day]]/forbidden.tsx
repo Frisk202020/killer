@@ -1,0 +1,1 @@
+export const Forbidden = () => <p>L'énigme du jour n'a pas encore été publiée</p>; 

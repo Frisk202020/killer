@@ -16,7 +16,7 @@ export const POST = AuthenticatedJsonRoute(PostSchema, false, async (body, user)
     const [winner, looser] = (await Promise.all(promises)).map((x) => x[0]);
     if (!winner || !looser) return PlayerNotFound;
     if (!assertAuthorized(user, winner.id, looser.id)) return PlayerUnauthorized;
-    if (winner.arena_tokens === 0 || looser.arena_tokens === 0) return BuildError(401, "One or both players are out of tokens");
+    if (winner.arena_tokens === 0 || looser.arena_tokens === 0) return BuildError(409, "One or both players are out of tokens");
     
     await db.update(players)
         .set({arena_tokens: winner.arena_tokens - 1, arena_victories: winner.arena_victories + 1})

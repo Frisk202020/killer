@@ -93,7 +93,7 @@ export default function Content({ player, targets } : {
 
     return <div className="main" id="main-home">
         {blur}
-        <p>{player.name}</p>
+        <p>Bienvenue, {player.name} !</p>
 
         <div style={{
             margin: "5vh"

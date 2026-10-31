@@ -6,7 +6,7 @@ export function PlayerRessource({ ressource, amount, imageVwSize } : {
     imageVwSize: number
 }) {
     return <div className="ressource">
-        <img src={`player-ressources/${ressource}.png`} style={{width: `${imageVwSize}vw`}}></img>
+        <img src={`/player-ressources/${ressource}.png`} style={{width: `${imageVwSize}vw`}}></img>
         <p>{amount}</p>
     </div>
 }

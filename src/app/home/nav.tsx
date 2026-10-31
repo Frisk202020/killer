@@ -6,9 +6,9 @@ export const Nav = () => <div style={{
     {([
         ["skills", ""],
         ["people", ""],
-        ["home", ""],
-        ["enigma", "home/enigmas"],
-        ["arena", ""]
+        ["home", "/home"],
+        ["enigma", "/home/enigmas"],
+        ["arena", "/home/arena"]
     ] as const).map(([img, link], i) => <button key={`nav.${i}`} style={{
         width: "20vw",
         height: "20vw",

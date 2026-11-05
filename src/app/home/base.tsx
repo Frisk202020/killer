@@ -1,4 +1,4 @@
-import { players } from "@/db/schema";
+import { Player, players } from "@/db/schema";
 import { connection } from "next/server";
 import { JSX } from "react/jsx-runtime";
 import { authenticate } from "../api/authenticate";
@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 
-type Target<T> = (player: typeof players.$inferSelect, request: T) => Promise<JSX.Element>; 
+type Target<T> = (player: Player, request: T) => Promise<JSX.Element>; 
 export type Params<T> = {
     params: Promise<T>
 }

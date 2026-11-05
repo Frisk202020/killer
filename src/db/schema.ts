@@ -36,6 +36,7 @@ export const players = sqliteTable("players", {
     arena_tokens: integer().notNull().default(ARENA_TOKENS),
     arena_victories: integer().notNull().default(0)
 });
+export type Player = typeof players.$inferSelect;
 
 export const faction_targets = sqliteTable("faction_targets", {
     id: integer().primaryKey({autoIncrement: true}),

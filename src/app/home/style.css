@@ -1,5 +1,7 @@
 #main-home {
-    margin: 2vh;
+    height: calc(100vh - 20vw);
+    padding: 2vh;
+    overflow-y: scroll;
 }
 
 #main-form {

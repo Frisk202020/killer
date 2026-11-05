@@ -6,6 +6,8 @@ import { Nav } from "../nav"
 import { PostSchema } from "@/app/api/arena/model"
 import { useState } from "react"
 import TextBox, { BoxType } from "@/components/text-box/text-box"
+import client_error from "@/app/api/arena/client-errors"
+import { Severity } from "@/app/api/client-errors"
 
 export default function Content({ name, arena_tokens, arena_victories } : { name: string, arena_tokens: number, arena_victories: number }) {
     const [warn, setWarn] = useState("");
@@ -41,11 +43,11 @@ export default function Content({ name, arena_tokens, arena_victories } : { name
                 fetch("/api/arena", { method: "POST", body: JSON.stringify(parsed.data) }).then((res) => {
                     if (res.ok)  window.location.reload();
                     else {
-                        switch(res.status) {
-                            case 401: window.location.href = "/";
-                            case 404: setWarn("Ce joueur n'existe pas"); break;
-                            case 409: setWarn("Vous ou votre adversaire n'avez plus de jetons d'arène"); break;
-                            default: setError("[HOME-ARENA-01] Une erreur interne est survenue");
+                        const err = client_error(res.status, "HOME-ARENA-01");
+                        switch (err.severity) {
+                            case Severity.Unauthorized: window.location.href = "/";
+                            case Severity.Error: setError(err.text);
+                            case Severity.Warn: setWarn(err.text);
                         }
                     }
                 });

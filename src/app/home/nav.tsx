@@ -5,7 +5,7 @@ export const Nav = () => <div style={{
 }}>
     {([
         ["skills", ""],
-        ["people", ""],
+        ["people", "/home/players"],
         ["home", "/home"],
         ["enigma", "/home/enigmas"],
         ["arena", "/home/arena"]

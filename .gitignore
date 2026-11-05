@@ -1,6 +1,7 @@
 *.db
 tmp.ts
 discord-*.json
+REFACTOR.md
 
 # dependencies
 node_modules/

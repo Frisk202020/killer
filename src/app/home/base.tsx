@@ -5,10 +5,30 @@ import { authenticate } from "../api/authenticate";
 import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
+import { Faction } from "@/db/data";
+import { CSSProperties } from "react";
+import StyledBody from "./styled-body";
 
 type Target<T> = (player: Player, request: T) => Promise<JSX.Element>; 
 export type Params<T> = {
     params: Promise<T>
+}
+
+function style(faction: Faction): CSSProperties {
+    switch(faction) {
+        case "Sapiens": return {
+            backgroundImage: "linear-gradient( #82f07c, #bcffbf )",
+            color: "#1e5b22"
+        };
+
+        case "Aazimaar": return {
+            backgroundColor: "#0000ff"
+        };
+
+        case "Tiefflins": return {
+            backgroundColor: "#ff0000"
+        };
+    }
 }
 
 export async function Base<T>(f: Target<T>, request: T) {
@@ -21,7 +41,5 @@ export async function Base<T>(f: Target<T>, request: T) {
     const data = (await db.select().from(players).where(eq(players.id, user.player_id)))[0];
     if (data === undefined) redirect("/login");
 
-    return await f(data, request);
+    return <StyledBody inner={await f(data, request)} faction={data.faction}></StyledBody>
 }
-
-export const VoidBase = async (f: Target<undefined>) => Base(f, undefined);

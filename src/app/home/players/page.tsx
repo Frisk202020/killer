@@ -1,12 +1,12 @@
 import { db } from "@/db";
-import { VoidBase } from "../base";
+import { Base } from "../base";
 import { players } from "@/db/schema";
-import { eq, gt, ne } from "drizzle-orm";
+import { eq, ne } from "drizzle-orm";
 import { Content } from "./content";
 
 export const instant = false;
 
-const Players = () => VoidBase(async (player) => {
+const Players = () => Base(async (player) => {
     const team = await db.select().from(players).where(eq(players.faction, player.faction)); 
     const opponents = await db.select({
         name: players.name, alive: players.alive, faction: players.faction,
@@ -21,5 +21,5 @@ const Players = () => VoidBase(async (player) => {
         a_score: x.a_score,
         can_battle: x.tokens > 0
     }))}></Content>
-});
+}, null);
 export default Players;

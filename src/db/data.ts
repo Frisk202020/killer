@@ -26,22 +26,65 @@ const RACES = [
 export const FACTIONS = ["Aazimaar", "Sapiens", "Tiefflins"] as const;
 export type Faction = typeof FACTIONS[number];
 
-export function faction_color(faction: Faction) {
+export function prefers_dark() {
+    const darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+    return darkMode.matches;
+}
+
+interface RootProperties {
+    "background-primary": string,
+    "background-secondary": string,
+    "background-objects": string,
+    color: string
+}
+
+export const default_colors: RootProperties = {
+    "background-primary": "#ffffff",
+    "background-secondary": "#b1b1b1",
+    "background-objects": "#787676",
+    color: "#171717"
+}
+
+export function faction_colors(faction: Faction, dark: boolean): RootProperties {
     switch(faction) {
-        case "Aazimaar": return {
-            primary: "#8eeafd",
-            secondary: "#00aacc"
-        };
+        case "Sapiens":
+            return dark ? {
+                "background-primary": "#054602",
+                "background-secondary": "#011402",
+                "background-objects": "#265d26",
+                color: "#96f59c"
+            } : {
+                "background-primary": "#82f07c",
+                "background-secondary": "#bcffbf",
+                "background-objects": "#81c649",
+                color: "#1e5b22"
+            };
 
-        case "Sapiens": return {
-            primary: "#73fc93",
-            secondary: "#00a025"
-        };
+        case "Aazimaar":
+            return dark ? {
+                "background-primary": "#030838",
+                "background-secondary": "#080480",
+                "background-objects": "#6439fe",
+                color: "#71d7e7"
+            } : {
+                "background-primary": "#3cf7f7",
+                "background-secondary": "#96ffff",
+                "background-objects": "#85fffb",
+                color: "#01045a"
+            };
 
-        case "Tiefflins": return {
-            primary: "#ff6e6e",
-            secondary: "#bd2727"
-        }
+        case "Tiefflins":
+            return dark ? {
+                "background-primary": "#570b03",
+                "background-secondary": "#2b0100",
+                "background-objects": "#822121",
+                color: "#f0857f"
+            } : {
+                "background-primary": "#de210c",
+                "background-secondary": "#ed9229",
+                "background-objects": "#ebb25d",
+                color: "#501104"
+            };
     }
 }
 

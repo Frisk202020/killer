@@ -14,23 +14,6 @@ export type Params<T> = {
     params: Promise<T>
 }
 
-function style(faction: Faction): CSSProperties {
-    switch(faction) {
-        case "Sapiens": return {
-            backgroundImage: "linear-gradient( #82f07c, #bcffbf )",
-            color: "#1e5b22"
-        };
-
-        case "Aazimaar": return {
-            backgroundColor: "#0000ff"
-        };
-
-        case "Tiefflins": return {
-            backgroundColor: "#ff0000"
-        };
-    }
-}
-
 export async function Base<T>(f: Target<T>, request: T) {
     await connection();
     

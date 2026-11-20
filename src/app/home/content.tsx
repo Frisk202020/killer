@@ -6,8 +6,8 @@ import "../globals.css"
 import { PlayerRessource } from "@/components/player-ressource/player-ressource";
 import type { Player } from "@/db/schema";
 import { Nav } from "./nav";
-import { useState } from "react";
-import { Faction, faction_color } from "@/db/data";
+import { useEffect, useState } from "react";
+import { default_colors, Faction, faction_colors, prefers_dark } from "@/db/data";
 import { Post, PostSchema } from "../api/kill/model";
 import TextBox from "@/components/text-box/text-box";
 import ObjectInFront from "@/components/object-in-front/object-in-front";
@@ -21,14 +21,17 @@ export default function Content({ player, targets } : {
     player: Player, 
     targets: { name: string, faction: string }[] 
 }) {
-    const playerColors = faction_color(player.faction);
+    const [playerColors, setPlayerColors] = useState(default_colors);
+    useEffect(() => setPlayerColors(faction_colors(player.faction, prefers_dark())), []);    
+
     const targetsDisplay = targets.length === 0 
         ? <p>Votre faction a abattu toutes les cibles du jour, félicitations !</p>
         : targets.map((x, i) => <div key={`target.${i}`} style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center"
-    }}>
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
+        }
+    }>
         <p>{x.name} ({x.faction})</p>
         <button onClick={() => setKilled(x)}>Revendiquer</button>
     </div>)
@@ -37,9 +40,9 @@ export default function Content({ player, targets } : {
     const [killed, setKilled] = useState<KilledData | null>(null);
 
     const blur = <ObjectInFront object={killed === null ? <div></div> : <div className="main" id="main-form" style={{
-        borderColor: playerColors.secondary,
-        backgroundColor: playerColors.primary,
-        color: playerColors.secondary
+        borderColor: playerColors.color,
+        backgroundColor: playerColors["background-secondary"],
+        color: playerColors.color
     }}>
         <TextBox content={error} setter={setError}></TextBox>
 

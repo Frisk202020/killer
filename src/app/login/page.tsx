@@ -48,7 +48,7 @@ export default function Login() {
             <Input label="Nom d'utilisateur" name="username" required={true} options={{style: {marginBottom: "5vh"}}}></Input>
             <Input label="Mot de passe" name="password" required={true} options={{type: "password", style: { marginBottom: "10vh" }}}></Input>
 
-            <button type="submit">Se connecter</button>
+            <button className="curved-border" type="submit">Se connecter</button>
         </form>
     </div>;
 }

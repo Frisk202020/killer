@@ -1,7 +1,7 @@
 export const Nav = () => <div style={{
     display: "flex",
     position: "fixed",
-    bottom: "0px"
+    bottom: "0px",
 }}>
     {([
         ["skills", ""],
@@ -12,7 +12,8 @@ export const Nav = () => <div style={{
     ] as const).map(([img, link], i) => <button key={`nav.${i}`} style={{
         width: "20vw",
         height: "20vw",
-        border: "solid .5vw"
+        border: "solid .5vw",
+        borderRadius: "0"
     }} onClick={() => window.location.href = link}><img src={`/nav/${img}.png`} style={{
         width: "100%",
     }}></img></button>)}

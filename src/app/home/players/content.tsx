@@ -5,10 +5,10 @@ import "../style.css"
 import "../../globals.css"
 
 import { PlayerRessource } from "@/components/player-ressource/player-ressource";
-import { Faction, faction_color } from "@/db/data";
+import { Faction, faction_colors, prefers_dark } from "@/db/data";
 import { Player } from "@/db/schema";
 import { Nav } from "../nav";
-import { CSSProperties, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import ImageButton from "@/components/image-button";
 import { Post } from "@/app/api/arena/model";
 import client_error from "@/app/api/arena/client-errors";
@@ -32,8 +32,17 @@ export function Content({ player, team, opponents } : {
     const [opponentKill, setOpponentKIll] = useState<Opponent|null>(null);
     const [error, setError] = useState("");
 
-    const teamColors = faction_color(team.faction);
-    const formArena = <div className="form" style={{backgroundColor: teamColors.primary, borderColor: teamColors.secondary}}>
+    const [dark, setDark] = useState(false);
+    useEffect(() => setDark(prefers_dark()), []);
+
+    const teamColors = faction_colors(player.faction, dark);
+    useEffect(() => setDark(prefers_dark()), []);
+
+    const formArena = <div className="form" style={{
+        backgroundColor: teamColors["background-objects"], 
+        borderColor: teamColors.color,
+        color: teamColors.color
+    }}>
         <p>{`Voulez vous déclarer une victoire d'arène contre ${opponentArena} ?`}</p>
 
         <div className="form-buttons">
@@ -111,7 +120,11 @@ export function Content({ player, team, opponents } : {
 
         return <div 
             className="player-box" 
-            style={{borderColor: teamColors.secondary, backgroundColor: teamColors.primary}}
+            style={{
+                borderColor: teamColors.color, 
+                backgroundColor: teamColors["background-objects"],
+                color: teamColors.color
+            }}
             key={`team.${i}`}
         >
             <p style={{textAlign: "center"}}><b>{x.name}</b></p>
@@ -132,7 +145,7 @@ export function Content({ player, team, opponents } : {
             
             <ImageButton 
                 src={`/nav/arena${btnEnabled ? "" : "_locked"}.png`} 
-                style={btnEnabled ? imgStyle(teamColors.secondary, teamColors.secondary) : inactiveStyle} 
+                style={btnEnabled ? imgStyle(teamColors["background-primary"], teamColors.color) : inactiveStyle} 
                 onclick={() => { if (btnEnabled) setOpponentArena(x.name) }}
             ></ImageButton>
         </div>
@@ -141,9 +154,13 @@ export function Content({ player, team, opponents } : {
     const opponentDisplay = opponents.map((x, i) => {
         const arenaEnabled = player.arena_tokens > 0 && x.can_battle;
         const killEnabled = player.alive && x.alive;
-        const colors = faction_color(x.faction);
+        const colors = faction_colors(x.faction, dark);
 
-        return <div key={`opp.${i}`} className="player-box" style={{backgroundColor: colors.primary, borderColor: colors.secondary}}>
+        return <div key={`opp.${i}`} className="player-box" style={{
+            backgroundColor: colors["background-objects"], 
+            borderColor: colors.color,
+            color: colors.color
+        }}>
             <p><b>{x.name}</b></p>
             <div style={{display: "flex", flexDirection: "row"}}>
                 <PlayerRessource ressource={"s_score"} amount={x.s_score} imageVwSize={imgWidth}></PlayerRessource>
@@ -153,14 +170,16 @@ export function Content({ player, team, opponents } : {
             <div style={{marginTop: "2vh", display: "flex", justifyContent: "space-around", width: "80%"}}>
                 <ImageButton 
                     src={`/nav/arena${arenaEnabled ? "" : "_locked"}.png`} 
-                    style={arenaEnabled ? imgStyle(colors.secondary, colors.secondary) : inactiveStyle}
+                    style={arenaEnabled ? imgStyle(colors["background-primary"], colors.color) : inactiveStyle}
                     onclick={() => { if (arenaEnabled) setOpponentArena(x.name) }}
                 ></ImageButton>
 
                 <ImageButton 
                     src="/nav/target.png" 
-                    style={killEnabled ? imgStyle(colors.secondary, colors.secondary) : inactiveStyle}
-                    onclick={() => { if (killEnabled) setOpponentKIll({name: x.name, faction: x.faction, bg: colors.primary, border: colors.secondary}) }}
+                    style={killEnabled ? imgStyle(colors["background-primary"], colors.color) : inactiveStyle}
+                    onclick={() => { if (killEnabled) setOpponentKIll({
+                        name: x.name, faction: x.faction, bg: colors["background-primary"], border: colors.color
+                    }) }}
                 ></ImageButton>
             </div>
         </div>

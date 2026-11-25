@@ -12,6 +12,33 @@
     text-align: center;
 }
 
+.space-between * {
+    margin: 1vh;
+}
+
+.box {
+    border-radius: "20px";
+    padding: "3vw";
+    width: "80vw";
+    margin: 3vh;
+}
+
+.box-icon {
+    position: absolute;
+    font-size: 40px !important;
+    top: 0px;
+    left: 0px;
+    margin: 1vw;
+}
+
+#profile > * {
+    margin: 1vh;
+}
+
+#profile > div > * {
+    margin: .5vh;
+}
+
 #main-form * {
-    margin: 2vh
+    margin: 2vh;
 }

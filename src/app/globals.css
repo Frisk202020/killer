@@ -14,6 +14,18 @@
   }
 }
 
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+}
+
+.clickable:hover {
+  cursor: pointer;
+}
+
 html {
   height: 100%;
 }
@@ -37,6 +49,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-family: "font", Arial;
+}
+
+body * {
   font-family: "font", Arial;
 }
 
@@ -65,11 +81,23 @@ a {
 
 button {
   font-size: 20px;
-  padding: 1vw;
+  padding: 2vw;
   color: var(--color);
   background-color: var(--background-objects);
   border: solid var(--color);
   border-radius: 20px;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.input-file-label {
+  color: var(--color);
+  padding: 1vw;
+  border: solid .5vw var(--color);
+  border-radius: 20px; 
+  background-color: var(--background-objects);
 }
 
 input[type="text"] {

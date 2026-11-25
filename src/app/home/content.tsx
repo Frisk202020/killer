@@ -11,6 +11,8 @@ import { default_colors, Faction, faction_colors, prefers_dark } from "@/db/data
 import { Post, PostSchema } from "../api/kill/model";
 import TextBox from "@/components/text-box/text-box";
 import ObjectInFront from "@/components/object-in-front/object-in-front";
+import Icon from "@/components/icon";
+import FileInput from "@/components/file-input";
 
 interface KilledData {
     name: string,
@@ -19,22 +21,38 @@ interface KilledData {
 
 export default function Content({ player, targets } : { 
     player: Player, 
-    targets: { name: string, faction: string }[] 
+    targets: { name: string, faction: Faction }[] 
 }) {
     const [playerColors, setPlayerColors] = useState(default_colors);
-    useEffect(() => setPlayerColors(faction_colors(player.faction, prefers_dark())), []);    
+    const [dark, setDark] = useState(false);
+    useEffect(() => {
+        setDark(prefers_dark());
+        setPlayerColors(faction_colors(player.faction, dark))
+    }, []);    
 
     const targetsDisplay = targets.length === 0 
         ? <p>Votre faction a abattu toutes les cibles du jour, félicitations !</p>
-        : targets.map((x, i) => <div key={`target.${i}`} style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
-        }
-    }>
-        <p>{x.name} ({x.faction})</p>
-        <button onClick={() => setKilled(x)}>Revendiquer</button>
-    </div>)
+        : targets.map((x, i) => {
+            const colors = faction_colors(x.faction, dark);
+
+            return <div key={`target.${i}`} style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    color: colors.color
+                }
+            }>
+                <div style={{display: "flex"}}>
+                    <Icon name="skull" style={{margin: "0", marginRight: "5vw"}}></Icon>
+                    <p style={{margin: "0", color: colors.color}}>{x.name} ({x.faction})</p>
+                </div>
+                <button onClick={() => setKilled(x)} style={{
+                    color: colors.color,
+                    borderColor: colors.color,
+                    backgroundColor: colors["background-objects"]
+                }}>Revendiquer</button>
+            </div>
+        })
 
     const [error, setError] = useState("");
     const [killed, setKilled] = useState<KilledData | null>(null);
@@ -45,6 +63,12 @@ export default function Content({ player, targets } : {
         color: playerColors.color
     }}>
         <TextBox content={error} setter={setError}></TextBox>
+        <Icon name="cancel" style={{
+            position: "fixed",
+            float: "left",
+            top: "5%",
+            right: "10%"
+        }} action={() => setKilled(null)}></Icon>
 
         <p>Vous allez réclamer l'assassinat de {killed.name} ({killed.faction})</p>
         <p>Ajoutez maintenant une preuve à l'image de votre exploit !</p>
@@ -78,24 +102,29 @@ export default function Content({ player, targets } : {
             <input type="hidden" name="query_faction" value={player.faction}></input>
             <input type="hidden" name="killer" value={player.name}></input>
             <input type="hidden" name="killed" value={killed.name}></input>
-            <input type="file" name="proof" accept="image/png, image/jpeg, image/webp" required={true}></input>
+            <FileInput id="proof" accept={["webp", "png", "jpeg"].map((x) => `image/${x}`)} required={true} label="Ajouter une preuve"></FileInput>
+            
             <button type="submit">Envoyer</button>
         </form>
     </div>} enabled={killed !== null}></ObjectInFront>
 
+    const statsColor = playerColors["background-objects"] + "7c";
     return <div className="main" id="main-home">
         {blur}
-        <p>Bienvenue, {player.name} !</p>
+        <p><b>Bienvenue, {player.name} !</b></p>
 
-        <div style={{
-            margin: "5vh"
-        }}>
-            <p>Faction : {player.faction}</p>
-            <p>Classe : {player.race}</p>
+        <div id="profile" className="box" style={{backgroundColor: statsColor, position: "relative"}}>
+            <Icon name="person" className="box-icon"></Icon>
+            <p><b>Profil</b></p>
+            <div>
+                <p>Faction : {player.faction}</p>
+                <p>Classe : {player.race}</p>
+            </div>
         </div>
 
-        <div>
-            <p>Statistiques</p>
+        <div className="box" style={{backgroundColor: statsColor, position: "relative"}}>
+            <Icon name="leaderboard" className="box-icon"></Icon>
+            <p><b>Statistiques</b></p>
             {([
                 ["coin", player.gold],
                 ["s_score", player.self_score],
@@ -103,8 +132,9 @@ export default function Content({ player, targets } : {
             ] as const).map(([r, x], i) => <PlayerRessource ressource={r} amount={x} imageVwSize={10} key={`ressource.${i}`}></PlayerRessource>)}
         </div>
 
-        <div>
-            <p style={{textAlign: "center"}}>Cibles de faction</p>
+        <div className="space-between box" style={{backgroundColor: statsColor, position: "relative"}}>
+            <Icon name="target" className="box-icon"></Icon>
+            <p style={{textAlign: "center"}}><b>Cibles de faction</b></p>
             {targetsDisplay}
         </div>
 

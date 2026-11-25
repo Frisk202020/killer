@@ -4,6 +4,9 @@ import z from "zod";
 const HOST = "http://localhost:3000"
 export const route_from_host = (route: string) => HOST + "/" + route;
 
+export const ICONS = ["home", "swords", "groups", "star_shine", "extension", "cancel", "target", "leaderboard", "skull", "person", "upload"] as const;
+export type IconName = typeof ICONS[number];
+
 interface RaceDescription {
     name: string,
     base_gear: Gear[]

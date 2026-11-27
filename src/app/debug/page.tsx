@@ -124,7 +124,7 @@ export default function Home() {
             fetch(`api/enigmas?${BuildGetParams(GetEnigmasSchema, body)}`).then(handle)
         }}>GET</button>
         <button onClick={() => {
-            const body: PostEnigma = { id: 1, content: "Hello world", solution: "feur" };
+            const body: PostEnigma = { id: 2, content: "Strawberries", solution: "202" };
             fetch("api/enigmas", { method: "POST", body: JSON.stringify(body) }).then(handle);
         }}>POST</button>
         <button onClick={() => {

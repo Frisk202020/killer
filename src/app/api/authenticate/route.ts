@@ -32,5 +32,5 @@ export const POST = JsonRoute(PostSchema, async (body) => {
         expires
     });
 
-    return NextResponse.json({});
+    return NextResponse.json({isAdmin: false});
 });

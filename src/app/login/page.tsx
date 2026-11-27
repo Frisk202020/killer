@@ -38,7 +38,9 @@ export default function Login() {
                     return;
                 }
 
-                window.location.href = "/";
+                const body = await res.json()
+                const admin = body.isAdmin ?? false;
+                window.location.href = admin ? "/debug" : "/home";
             });
         }} style={{
             display: "flex",

@@ -1,0 +1,10 @@
+#enigma-nav > button {
+    flex: 1 1 0px;
+    margin-left: 5vw;
+    margin-right: 5vw;
+}
+
+#enigma-nav > button > span {
+    margin: 1vw;
+}
+

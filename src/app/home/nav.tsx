@@ -1,6 +1,8 @@
 import Icon from "@/components/icon";
 import { IconName } from "@/db/data";
 
+export const NAV_HEIGHT = "20vw";
+
 const nav: [IconName, string][] = [
     ["star_shine", ""],
     ["groups", "/home/players"],
@@ -9,14 +11,14 @@ const nav: [IconName, string][] = [
     ["swords", "/home/arena"]
 ] as const;
 
-export const Nav = () => <div style={{
+export const Nav = () => <div id="nav" style={{
     display: "flex",
     position: "fixed",
     bottom: "0px",
 }}>
     {nav.map(([ico, link], i) => <button key={`nav.${i}`} style={{
         width: "20vw",
-        height: "20vw",
+        height: NAV_HEIGHT,
         border: "solid .5vw",
         borderRadius: "0"
     }} onClick={() => window.location.href = link}><Icon name={ico} style={{fontSize: "12vw"}}></Icon></button>)}

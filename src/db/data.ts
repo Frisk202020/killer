@@ -4,7 +4,10 @@ import z from "zod";
 const HOST = "http://localhost:3000"
 export const route_from_host = (route: string) => HOST + "/" + route;
 
-export const ICONS = ["home", "swords", "groups", "star_shine", "extension", "cancel", "target", "leaderboard", "skull", "person", "upload"] as const;
+export const ICONS = [
+    "home", "swords", "groups", "star_shine", "extension", "cancel", "target", "leaderboard", "skull", "person", "upload",
+    "emoji_objects", "send_time_extension", "arrow_left_alt", "arrow_right_alt", "undo"
+] as const;
 export type IconName = typeof ICONS[number];
 
 interface RaceDescription {
@@ -38,14 +41,18 @@ interface RootProperties {
     "background-primary": string,
     "background-secondary": string,
     "background-objects": string,
-    color: string
+    color: string,
+    "background-disabled": string,
+    "color-disabled": string
 }
 
 export const default_colors: RootProperties = {
     "background-primary": "#ffffff",
     "background-secondary": "#b1b1b1",
     "background-objects": "#787676",
-    color: "#171717"
+    color: "#171717",
+    "background-disabled": "#d6d6d6",
+    "color-disabled": "#9f9f9f"
 }
 
 export function faction_colors(faction: Faction, dark: boolean): RootProperties {
@@ -55,12 +62,16 @@ export function faction_colors(faction: Faction, dark: boolean): RootProperties 
                 "background-primary": "#054602",
                 "background-secondary": "#011402",
                 "background-objects": "#265d26",
-                color: "#96f59c"
+                color: "#96f59c",
+                "background-disabled": "#6a8471",
+                "color-disabled": "#cde4cc"
             } : {
                 "background-primary": "#82f07c",
                 "background-secondary": "#bcffbf",
                 "background-objects": "#81c649",
-                color: "#1e5b22"
+                color: "#1e5b22",
+                "background-disabled": "#a3c8a3",
+                "color-disabled": "#71876c"
             };
 
         case "Aazimaar":
@@ -68,12 +79,16 @@ export function faction_colors(faction: Faction, dark: boolean): RootProperties 
                 "background-primary": "#030838",
                 "background-secondary": "#080480",
                 "background-objects": "#6439fe",
-                color: "#71d7e7"
+                color: "#71d7e7",
+                "background-disabled": "#ffffff",
+                "color-disabled": "#ffffff"
             } : {
                 "background-primary": "#3cf7f7",
                 "background-secondary": "#96ffff",
                 "background-objects": "#85fffb",
-                color: "#01045a"
+                color: "#01045a",
+                "background-disabled": "#ffffff",
+                "color-disabled": "#ffffff"
             };
 
         case "Tiefflins":
@@ -81,12 +96,16 @@ export function faction_colors(faction: Faction, dark: boolean): RootProperties 
                 "background-primary": "#570b03",
                 "background-secondary": "#2b0100",
                 "background-objects": "#822121",
-                color: "#f0857f"
+                color: "#f0857f",
+                "background-disabled": "#ffffff",
+                "color-disabled": "#ffffff"
             } : {
                 "background-primary": "#de210c",
                 "background-secondary": "#ed9229",
                 "background-objects": "#ebb25d",
-                color: "#501104"
+                color: "#501104",
+                "background-disabled": "#ffffff",
+                "color-disabled": "#ffffff"
             };
     }
 }
@@ -111,6 +130,6 @@ export function EnigmaReward(rank: number) {
     }
 }
 
-export const CURRENT_DAY = 1;
+export const CURRENT_DAY = 2;
 
 export const hash = async (pwd: string) => await bcrypt.hash(pwd, 10);
